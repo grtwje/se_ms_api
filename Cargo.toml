@@ -1,0 +1,17 @@
+[package]
+name = "se_monitoring_server_api"
+version = "0.1.0"
+edition = "2021"
+description = "Library for accessing the SolarEdge Monitoring Server API"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "se_ms_api"
+path = "src/se_ms_api.rs"
+
+[dependencies]
+chrono = "0.4"
+reqwest = { version = "0.11", features = ["json", "blocking", "cookies"] }
+serde = { version = "1", features = ["derive"] }
