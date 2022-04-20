@@ -19,11 +19,11 @@
 //! let site_id = "my_site_id";
 //! let api_key = "my_api_key";
 //!
-//! let solar_edge = SolaredgeCredentials::new(&site_id, &api_key); // (1)
-//! let req = SiteDetailsReq::new();                                // (2)
-//! let resp = req.send(&solar_edge);                               // (3)
+//! let cred = SolaredgeCredentials::create(&site_id, &api_key); // (1)
+//! let req = SiteDetailsReq::new();                             // (2)
+//! let resp = req.send(&cred);                                  // (3)
 //!
-//! match resp {                                                    // (4)
+//! match resp {                                                 // (4)
 //!    Ok(r) => {
 //!        println!("My site's status is {}.", r.details.status);
 //!    }
@@ -37,7 +37,7 @@
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
 //!
 
-#![deny(unused_crate_dependencies)]
+//#![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
 #![warn(missing_docs)]
 
@@ -73,7 +73,7 @@ impl SolaredgeCredentials {
     const MONITORING_API_URL: &'static str = "https://monitoringapi.solaredge.com/";
 
     /// Create a Solaredge destination for the requests from the given site id and api_key.
-    pub fn new(site_id: &str, api_key: &str) -> Self {
+    pub fn create(site_id: &str, api_key: &str) -> Self {
         let url_start = SolaredgeCredentials::MONITORING_API_URL.to_string();
         let site_id = site_id.to_string();
         let url_end = format!("api_key={}", api_key);
@@ -84,6 +84,11 @@ impl SolaredgeCredentials {
             url_end,
         }
     }
+
+    /// See the site ID bing used in the credentials.
+    pub fn site_id(&self) -> &str {
+        &self.site_id
+    }
 }
 
 #[cfg(test)]
@@ -91,10 +96,11 @@ mod tests {
     use super::*;
 
     #[test]
-    fn solaredge_new_unit_test() {
-        let se = SolaredgeCredentials::new("id", "key");
+    fn solaredge_credentials_unit_test() {
+        let se = SolaredgeCredentials::create("id", "key");
         assert_eq!(se.url_start, SolaredgeCredentials::MONITORING_API_URL);
         assert_eq!(se.site_id, "id");
+        assert_eq!(se.site_id(), "id");
         assert_eq!(se.url_end, "api_key=key");
     }
 }

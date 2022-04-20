@@ -1,18 +1,16 @@
 use chrono::NaiveDateTime;
 
+#[macro_use]
+extern crate lazy_static;
+
 mod common;
 
 use se_ms_api::{
-    CurrentVersionReq, MeterType, SiteDetailsReq, SiteEnergyDetailedReq, SolaredgeCredentials,
-    SupportedVersionsReq,
+    CurrentVersionReq, MeterType, SiteDetailsReq, SiteEnergyDetailedReq, SupportedVersionsReq,
 };
 
 #[test]
 fn site_energy_detailed_integration_test() {
-    let (site_id, api_key) = common::get_site_id_and_api_key();
-
-    let solar_edge = SolaredgeCredentials::new(&site_id, &api_key);
-
     let start_ndt = match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::TIME_FORMAT)
     {
         Ok(dt) => dt,
@@ -31,7 +29,7 @@ fn site_energy_detailed_integration_test() {
         Some(vec![MeterType::SelfConsumption]),
     );
 
-    let resp = req.send(&solar_edge);
+    let resp = req.send(&common::TEST_CREDENTIALS);
 
     match resp {
         Ok(r) => {
@@ -56,12 +54,8 @@ fn site_energy_detailed_integration_test() {
 
 #[test]
 fn current_version_integration_test() {
-    let (site_id, api_key) = common::get_site_id_and_api_key();
-
-    let solar_edge = SolaredgeCredentials::new(&site_id, &api_key);
-
     let req = CurrentVersionReq::new();
-    let resp = req.send(&solar_edge);
+    let resp = req.send(&common::TEST_CREDENTIALS);
 
     match resp {
         Ok(r) => {
@@ -75,12 +69,8 @@ fn current_version_integration_test() {
 
 #[test]
 fn supported_versions_integration_test() {
-    let (site_id, api_key) = common::get_site_id_and_api_key();
-
-    let solar_edge = SolaredgeCredentials::new(&site_id, &api_key);
-
     let req = SupportedVersionsReq::new();
-    let resp = req.send(&solar_edge);
+    let resp = req.send(&common::TEST_CREDENTIALS);
 
     match resp {
         Ok(r) => {
@@ -94,16 +84,12 @@ fn supported_versions_integration_test() {
 
 #[test]
 fn site_details_integration_test() {
-    let (site_id, api_key) = common::get_site_id_and_api_key();
-
-    let solar_edge = SolaredgeCredentials::new(&site_id, &api_key);
-
     let req = SiteDetailsReq::new();
-    let resp = req.send(&solar_edge);
+    let resp = req.send(&common::TEST_CREDENTIALS);
 
     match resp {
         Ok(r) => {
-            assert_eq!(r.details.id.to_string(), site_id);
+            assert_eq!(r.details.id.to_string(), common::TEST_CREDENTIALS.site_id());
             assert_eq!(r.details.status, "Active");
             assert_eq!(r.details.location.countryCode, "US");
             assert_eq!(r.details.primaryModule.manufacturerName, "LG");

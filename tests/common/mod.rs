@@ -1,34 +1,32 @@
+use se_ms_api::SolaredgeCredentials;
 use std::env;
 use std::fs;
-use std::sync::Once;
 
-pub const TIME_FORMAT: &'static str = "%Y-%m-%d %H:%M:%S";
+pub const TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 
-const TEST_CREDENTIALS_FILE: &'static str = "test_credentials.txt";
+const TEST_CREDENTIALS_FILE: &str = "test_credentials.txt";
 
-static mut SITE_ID: String = String::new();
-static mut API_KEY: String = String::new();
-static INIT: Once = Once::new();
+lazy_static! {
+    pub static ref TEST_CREDENTIALS: SolaredgeCredentials = {
+        let mut site_id = String::new();
+        let mut api_key = String::new();
 
-pub fn get_site_id_and_api_key() -> (&'static str, &'static str) {
-    unsafe {
-        INIT.call_once(|| {
-            let path = env::current_dir().unwrap();
-            let path = path.join("tests").join(TEST_CREDENTIALS_FILE);
+        let path = env::current_dir().unwrap();
+        let path = path.join("tests").join(TEST_CREDENTIALS_FILE);
 
-            let contents = fs::read_to_string(path)
-                .expect(&format!("Unable to read {}.", TEST_CREDENTIALS_FILE));
-            let mut lines = contents.lines();
-            if let Some(s) = lines.next() {
-                SITE_ID = s.to_string();
-            }
-            if let Some(s) = lines.next() {
-                API_KEY = s.to_string();
-            }
-            if SITE_ID.len() == 0 || API_KEY.len() == 0 {
-                panic!("Ill formed credentials file.");
-            }
-        });
-        (&SITE_ID, &API_KEY)
-    }
+        let contents = fs::read_to_string(path)
+            .unwrap_or_else(|_| panic!("Unable to read {}.", TEST_CREDENTIALS_FILE));
+        let mut lines = contents.lines();
+        if let Some(s) = lines.next() {
+            site_id = s.to_string();
+        }
+        if let Some(s) = lines.next() {
+            api_key = s.to_string();
+        }
+        if site_id.is_empty() || api_key.is_empty() {
+            panic!("Ill formed credentials file.");
+        }
+
+        SolaredgeCredentials::create(&site_id, &api_key)
+    };
 }
