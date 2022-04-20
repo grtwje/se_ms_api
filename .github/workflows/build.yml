@@ -12,6 +12,14 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
+      - name: unit_tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test unit
+      - name: doc_tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test --doc
       - name: lint
         uses: actions-rs/clippy-check@v1
         with:
