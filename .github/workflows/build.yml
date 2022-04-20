@@ -22,6 +22,11 @@ jobs:
         with:
           command: test
           args: --doc
+      - name: Run rustfmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
       - name: lint
         uses: actions-rs/clippy-check@v1
         with:
