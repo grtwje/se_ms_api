@@ -37,8 +37,8 @@
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
 //!
 
-//#![deny(unused_crate_dependencies)]
-//#![deny(unused_extern_crates)]
+#![deny(unused_crate_dependencies)]
+#![deny(unused_extern_crates)]
 #![warn(missing_docs)]
 
 pub mod site_details;
