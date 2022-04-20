@@ -15,4 +15,4 @@ jobs:
       - name: lint
         uses: actions-rs/clippy-check@v1
         with:
-          token: ${{ secrets.CRATES_IO_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
