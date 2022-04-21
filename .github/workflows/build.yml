@@ -1,0 +1,33 @@
+on: [push]
+name: build
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - name: build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+      - name: unit_tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: unit
+      - name: doc_tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --doc
+      - name: Run rustfmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+      - name: lint
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
