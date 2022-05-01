@@ -1,36 +1,30 @@
+name: Rust
+
 on:
+  push:
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-name: build
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - name: build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-      - name: unit_tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: unit
-      - name: doc_tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --doc
-      - name: Run rustfmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
-      - name: lint
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --verbose
+      - name: Unit Tests
+        run: cargo test --verbose unit
+      - name: Doc Tests
+        run: cargo test --doc
+      - name: Fmt
+        run: cargo fmt --all -- --check
+      - name: Lint
         uses: actions-rs/clippy-check@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
