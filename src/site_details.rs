@@ -3,7 +3,7 @@
 use crate::site_location::SiteLocation;
 use crate::site_module::SiteModule;
 use crate::site_public_settings::SitePublicSettings;
-use crate::SolaredgeCredentials;
+use crate::{Response, SolaredgeCredentials};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -80,15 +80,15 @@ impl SiteDetailsReq {
         SiteDetailsReq {}
     }
 
-    /// Send the site_details request to Solaredge and return the response.
-    ///
-    /// # Arguments
-    ///
-    /// * `solaredge` - SolarEdge credentials to use for sending
-    ///
-    /// # Returns
-    /// the SolarEdge response or an error string
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteDetailsResp, String> {
+    // Send the site_details request to Solaredge and return the response.
+    //
+    // # Arguments
+    //
+    // * `solaredge` - SolarEdge credentials to use for sending
+    //
+    // # Returns
+    // the SolarEdge response or an error string
+    pub(crate) fn send(&self, solaredge: &SolaredgeCredentials) -> Result<Response, String> {
         let url = format!(
             "{}site/{}/details?{}",
             solaredge.url_start, solaredge.site_id, solaredge.url_end
@@ -104,7 +104,7 @@ impl SiteDetailsReq {
             Err(e) => return Err(format!("JSON parse error: {}", e)),
         };
 
-        Ok(parsed)
+        Ok(Response::SiteDetails(Box::new(parsed)))
     }
 }
 

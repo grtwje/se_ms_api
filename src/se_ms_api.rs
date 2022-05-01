@@ -14,32 +14,29 @@
 //!
 //! ```no_run
 //! extern crate se_ms_api;
-//! use se_ms_api::{SiteDetailsReq, SolaredgeCredentials};
+//! use se_ms_api::{SiteDetailsReq, SolaredgeCredentials, Request, Response};
 //!
 //! let site_id = "my_site_id";
 //! let api_key = "my_api_key";
 //!
 //! let cred = SolaredgeCredentials::create(&site_id, &api_key); // (1)
-//! let req = SiteDetailsReq::new();                             // (2)
-//! let resp = req.send(&cred);                                  // (3)
+//! let req = Request::SiteDetails(SiteDetailsReq::new());       // (2)
 //!
-//! match resp {                                                 // (4)
-//!    Ok(r) => {
-//!        println!("My site's status is {}.", r.details.status);
+//! match req.send(&cred) {                                      // (3)
+//!    Ok(resp) => {
+//!        if let Response::SiteDetails(r) = resp {              // (4)
+//!            println!("My site's status is {}.", r.details.status);
+//!        }
 //!    }
 //!    Err(e) => {
 //!        panic!("Unexpected SiteDetails response: {:?}", e);
 //!    }
 //!}
 //! ```
-//! Supported API requests/responses include:
-//! * [SiteDetailsReq] / [SiteDetailsResp]
-//! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
-//!
 
 //#![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
-#![warn(missing_docs)]
+//#![warn(missing_docs)]
 
 pub mod site_details;
 pub use site_details::{SiteDetailsReq, SiteDetailsResp};
@@ -88,6 +85,31 @@ impl SolaredgeCredentials {
     /// See the site ID bing used in the credentials.
     pub fn site_id(&self) -> &str {
         &self.site_id
+    }
+}
+
+pub enum Request {
+    CurrentVersion(CurrentVersionReq),
+    SiteDetails(SiteDetailsReq),
+    SiteEnergyDetailed(SiteEnergyDetailedReq),
+    SupportedVersions(SupportedVersionsReq),
+}
+
+pub enum Response {
+    CurrentVersion(CurrentVersionResp),
+    SiteDetails(Box<SiteDetailsResp>),
+    SiteEnergyDetailed(SiteEnergyDetailedResp),
+    SupportedVersions(SupportedVersionsResp),
+}
+
+impl Request {
+    pub fn send(&self, cred: &SolaredgeCredentials) -> Result<Response, String> {
+        match self {
+            Request::CurrentVersion(r) => r.send(cred),
+            Request::SiteDetails(r) => r.send(cred),
+            Request::SiteEnergyDetailed(r) => r.send(cred),
+            Request::SupportedVersions(r) => r.send(cred),
+        }
     }
 }
 

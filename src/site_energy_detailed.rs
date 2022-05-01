@@ -3,8 +3,8 @@
 use crate::meter_type::MeterType;
 use crate::meter_value::MeterValue;
 use crate::time_unit::TimeUnit;
-use crate::SolaredgeCredentials;
 use crate::URL_TIME_FORMAT;
+use crate::{Response, SolaredgeCredentials};
 use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request
@@ -82,15 +82,15 @@ impl SiteEnergyDetailedReq {
         }
     }
 
-    /// Send the site_energyDetails request to Solaredge and return the response.
-    ///
-    /// # Arguments
-    ///
-    /// * `solaredge` - SolarEdge credentials to use for sending
-    ///
-    /// # Returns
-    /// the SolarEdge response or an error string
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteEnergyDetailedResp, String> {
+    // Send the site_energyDetails request to Solaredge and return the response.
+    //
+    // # Arguments
+    //
+    // * `solaredge` - SolarEdge credentials to use for sending
+    //
+    // # Returns
+    // the SolarEdge response or an error string
+    pub(crate) fn send(&self, solaredge: &SolaredgeCredentials) -> Result<Response, String> {
         let url = format!(
             "{}site/{}/energyDetails?{}{}{}{}{}",
             solaredge.url_start,
@@ -114,7 +114,7 @@ impl SiteEnergyDetailedReq {
             Err(e) => return Err(format!("JSON parse error {}", e)),
         };
 
-        Ok(parsed)
+        Ok(Response::SiteEnergyDetailed(parsed))
     }
 }
 

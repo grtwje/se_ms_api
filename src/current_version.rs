@@ -1,6 +1,6 @@
 //! Module for querying the current API version of the SolarEdge monitoring server.
 
-use crate::SolaredgeCredentials;
+use crate::{Response, SolaredgeCredentials};
 use serde::{Deserialize, Serialize};
 
 /// Current version request
@@ -28,15 +28,15 @@ impl CurrentVersionReq {
         CurrentVersionReq {}
     }
 
-    /// Send the current version request to Solaredge and return the response.
-    ///
-    /// # Arguments
-    ///
-    /// * `solaredge` - SolarEdge credentials to use for sending
-    ///
-    /// # Returns
-    /// the SolarEdge response or an error string
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<CurrentVersionResp, String> {
+    // Send the current version request to Solaredge and return the response.
+    //
+    // # Arguments
+    //
+    // * `solaredge` - SolarEdge credentials to use for sending
+    //
+    // # Returns
+    // the SolarEdge response or an error string
+    pub(crate) fn send(&self, solaredge: &SolaredgeCredentials) -> Result<Response, String> {
         let url = format!(
             "{}version/current?{}",
             solaredge.url_start, solaredge.url_end
@@ -52,7 +52,7 @@ impl CurrentVersionReq {
             Err(e) => return Err(format!("JSON parse error {}", e)),
         };
 
-        Ok(parsed)
+        Ok(Response::CurrentVersion(parsed))
     }
 }
 
