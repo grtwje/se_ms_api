@@ -2,9 +2,9 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
 /// A date and value pair returned from the monitoring API. The value units are specified by the unit
 /// field elsewhere in the response.
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
 pub struct DateValue {
     /// YYYY-mm-dd HH:MM:SS
     pub date: String,

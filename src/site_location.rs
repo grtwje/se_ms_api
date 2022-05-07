@@ -2,9 +2,9 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// Location of the SolarEdge inverter.
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[allow(non_snake_case)]
 pub struct SiteLocation {
     /// Country of the SolarEdge inverter.
     pub country: String,

@@ -8,6 +8,7 @@ use crate::URL_TIME_FORMAT;
 use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct SiteEnergyDetailedReq {
     start_time: String,
     end_time: String,
@@ -15,17 +16,17 @@ pub struct SiteEnergyDetailedReq {
     meters: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// site_energyDetails response
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[allow(non_snake_case)]
 pub struct SiteEnergyDetailedResp {
     /// Energy details
     pub energyDetails: EnergyDetails,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// Energy details
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[allow(non_snake_case)]
 pub struct EnergyDetails {
     /// Granularity of the energy detail values (should match the request)
     pub timeUnit: String,

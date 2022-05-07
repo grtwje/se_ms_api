@@ -35,7 +35,10 @@ fn site_energy_detailed_integration_test() {
         Ok(r) => {
             assert_eq!(r.energyDetails.unit, "Wh");
             assert_eq!(r.energyDetails.meters.len(), 1);
-            assert_eq!(r.energyDetails.meters[0].r#type, MeterType::SelfConsumption);
+            assert_eq!(
+                r.energyDetails.meters[0].meter_type,
+                MeterType::SelfConsumption
+            );
             assert_eq!(r.energyDetails.meters[0].values.len(), 31);
 
             let mut self_consumption: f32 = 0.0;
@@ -61,8 +64,8 @@ fn current_version_integration_test() {
         Ok(r) => {
             assert_eq!(r.version.release, "1.0.0");
         }
-        bad => {
-            panic!("Unexpected CurrentVersion response: {:?}", bad);
+        Err(e) => {
+            panic!("Unexpected CurrentVersion response: {:?}", e);
         }
     }
 }
@@ -76,8 +79,8 @@ fn supported_versions_integration_test() {
         Ok(r) => {
             assert_eq!(r.supported[0].release, "1.0.0");
         }
-        bad => {
-            panic!("Unexpected SupportedVersions response: {:?}", bad);
+        Err(e) => {
+            panic!("Unexpected SupportedVersions response: {:?}", e);
         }
     }
 }

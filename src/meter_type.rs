@@ -2,8 +2,8 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 /// Meters supported by SolarEdge.
+#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
 pub enum MeterType {
     /// Solar energy produced.
     Production,

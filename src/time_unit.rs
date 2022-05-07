@@ -1,8 +1,9 @@
 //! Module for handling units of time used by the SolarEdge server monitoring API.
 
-#[allow(non_camel_case_types)]
 /// Time units specified in SolarEdge server monitoring API requests and responses.
 /// Specifies the aggregation granularity of the data.
+#[allow(non_camel_case_types)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum TimeUnit {
     /// 15 minutes
     QUARTER_OF_AN_HOUR,
@@ -33,6 +34,12 @@ impl std::fmt::Display for TimeUnit {
             TimeUnit::MONTH => write!(f, "MONTH"),
             TimeUnit::YEAR => write!(f, "YEAR"),
         }
+    }
+}
+
+impl Default for TimeUnit {
+    fn default() -> TimeUnit {
+        TimeUnit::DAY
     }
 }
 

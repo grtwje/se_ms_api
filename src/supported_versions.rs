@@ -4,19 +4,20 @@ use crate::SolaredgeCredentials;
 use serde::{Deserialize, Serialize};
 
 /// Supported versions request
-pub struct SupportedVersionsReq {}
+#[derive(Clone, Debug, PartialEq)]
+pub struct SupportedVersionsReq;
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// Supported versions response
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[allow(non_snake_case)]
 pub struct SupportedVersionsResp {
     /// An array of all the API versions supported by the server
     pub supported: Vec<Release>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// A release version supported by the server
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[allow(non_snake_case)]
 pub struct Release {
     /// A release number supported by the server in <major.minor.revision> format.
     pub release: String,

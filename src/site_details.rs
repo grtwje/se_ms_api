@@ -8,19 +8,20 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 /// site_details request
-pub struct SiteDetailsReq {}
+#[derive(Clone, Debug, PartialEq)]
+pub struct SiteDetailsReq;
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// site_details response
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[allow(non_snake_case)]
 pub struct SiteDetailsResp {
     /// Detailed information about the monitoring site
     pub details: SiteDetails,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// Detailed information for a single site.
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[allow(non_snake_case)]
 pub struct SiteDetails {
     /// ID of the site. Should match the site_id specified in the Solaredge request.
     pub id: i32,
@@ -53,7 +54,8 @@ pub struct SiteDetails {
     pub notes: String,
 
     /// Site type, ("Optimizers & Inverters", "Safety & Monitoring Interface", "Monitoring Combiner Boxes")
-    pub r#type: String, // had to escape the keyword type to use as an identifier
+    #[serde(rename = "type")]
+    pub site_type: String,
 
     /// Site location (mailing address)
     pub location: SiteLocation,
