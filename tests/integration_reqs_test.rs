@@ -33,16 +33,16 @@ fn site_energy_detailed_integration_test() {
 
     match resp {
         Ok(r) => {
-            assert_eq!(r.energyDetails.unit, "Wh");
-            assert_eq!(r.energyDetails.meters.len(), 1);
+            assert_eq!(r.energy_details.unit, "Wh");
+            assert_eq!(r.energy_details.meters.len(), 1);
             assert_eq!(
-                r.energyDetails.meters[0].meter_type,
+                r.energy_details.meters[0].meter_type,
                 MeterType::SelfConsumption
             );
-            assert_eq!(r.energyDetails.meters[0].values.len(), 31);
+            assert_eq!(r.energy_details.meters[0].values.len(), 31);
 
             let mut self_consumption: f32 = 0.0;
-            for v in &r.energyDetails.meters[0].values {
+            for v in &r.energy_details.meters[0].values {
                 if let Some(value) = v.value {
                     self_consumption += value;
                 }
@@ -94,10 +94,10 @@ fn site_details_integration_test() {
         Ok(r) => {
             assert_eq!(r.details.id.to_string(), common::TEST_CREDENTIALS.site_id());
             assert_eq!(r.details.status, "Active");
-            assert_eq!(r.details.location.countryCode, "US");
-            assert_eq!(r.details.primaryModule.manufacturerName, "LG");
+            assert_eq!(r.details.location.country_code, "US");
+            assert_eq!(r.details.primary_module.manufacturer_name, "LG");
             assert!(r.details.uris.contains_key("SITE_IMAGE"));
-            assert!(!r.details.publicSettings.isPublic);
+            assert!(!r.details.public_settings.is_public);
         }
         Err(e) => {
             panic!("Unexpected SiteDetails response: {:?}", e);

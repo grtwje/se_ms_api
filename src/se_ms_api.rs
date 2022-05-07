@@ -121,6 +121,9 @@ impl SolaredgeCredentials {
 }
 
 #[cfg(test)]
+pub(crate) fn is_normal<T: Sized + Send + Sync + Unpin>() {}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -131,5 +134,10 @@ mod tests {
         assert_eq!(se.site_id, "id");
         assert_eq!(se.site_id(), "id");
         assert_eq!(se.url_end, "api_key=key");
+    }
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<SolaredgeCredentials>();
     }
 }

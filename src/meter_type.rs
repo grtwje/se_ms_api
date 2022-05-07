@@ -36,10 +36,16 @@ impl std::fmt::Display for MeterType {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::is_normal;
 
     #[test]
     fn meter_type_fmt_unit_test() {
         let t = MeterType::Production;
         assert_eq!(format!("{}", t), "Production");
+    }
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<MeterType>();
     }
 }

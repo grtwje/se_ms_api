@@ -14,3 +14,14 @@ pub struct MeterValue {
     /// Meter readings for each date.
     pub values: Vec<DateValue>,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::is_normal;
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<MeterValue>();
+    }
+}

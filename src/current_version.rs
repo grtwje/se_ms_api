@@ -9,7 +9,6 @@ pub struct CurrentVersionReq;
 
 /// Current version response
 #[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
-#[allow(non_snake_case)]
 pub struct CurrentVersionResp {
     /// The API version running on the server
     pub version: Version,
@@ -17,7 +16,6 @@ pub struct CurrentVersionResp {
 
 /// The release version of the server
 #[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
-#[allow(non_snake_case)]
 pub struct Version {
     /// The release number running on the server in <major.minor.revision> format.
     pub release: String,
@@ -36,7 +34,8 @@ impl CurrentVersionReq {
     /// * `solaredge` - SolarEdge credentials to use for sending
     ///
     /// # Returns
-    /// the SolarEdge response or an error string
+    /// The SolarEdge response or an error string.
+    /// Errors can occur on the request send or when parsing the response.
     pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<CurrentVersionResp, String> {
         let url = format!(
             "{}version/current?{}",
@@ -60,5 +59,18 @@ impl CurrentVersionReq {
 impl Default for CurrentVersionReq {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::is_normal;
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<CurrentVersionReq>();
+        is_normal::<CurrentVersionResp>();
+        is_normal::<Version>();
     }
 }

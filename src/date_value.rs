@@ -12,3 +12,14 @@ pub struct DateValue {
     /// Often an integer, but can be float too. Meaning defined by the context of the response.
     pub value: Option<f32>,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::is_normal;
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<DateValue>();
+    }
+}
