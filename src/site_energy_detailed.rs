@@ -8,6 +8,7 @@ use crate::URL_TIME_FORMAT;
 use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct SiteEnergyDetailedReq {
     start_time: String,
     end_time: String,
@@ -15,20 +16,20 @@ pub struct SiteEnergyDetailedReq {
     meters: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// site_energyDetails response
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct SiteEnergyDetailedResp {
     /// Energy details
-    pub energyDetails: EnergyDetails,
+    pub energy_details: EnergyDetails,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// Energy details
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct EnergyDetails {
     /// Granularity of the energy detail values (should match the request)
-    pub timeUnit: String,
+    pub time_unit: String,
 
     /// Measurement unit (e.g. Wh)
     pub unit: String,
@@ -89,7 +90,8 @@ impl SiteEnergyDetailedReq {
     /// * `solaredge` - SolarEdge credentials to use for sending
     ///
     /// # Returns
-    /// the SolarEdge response or an error string
+    /// The SolarEdge response or an error string.
+    /// Errors can occur on the request send or when parsing the response.
     pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteEnergyDetailedResp, String> {
         let url = format!(
             "{}site/{}/energyDetails?{}{}{}{}{}",
@@ -121,6 +123,7 @@ impl SiteEnergyDetailedReq {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::is_normal;
     use chrono::NaiveDateTime;
 
     #[test]
@@ -135,5 +138,12 @@ mod tests {
         assert_eq!(req.end_time, format!("endTime={}&", dt));
         assert_eq!(req.time_unit, "");
         assert_eq!(req.meters, "");
+    }
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<SiteEnergyDetailedReq>();
+        is_normal::<SiteEnergyDetailedResp>();
+        is_normal::<EnergyDetails>();
     }
 }

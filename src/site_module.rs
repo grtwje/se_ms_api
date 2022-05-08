@@ -2,19 +2,30 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// Solar panel module information
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct SiteModule {
     /// solar panel manufacturer
-    pub manufacturerName: String,
+    pub manufacturer_name: String,
 
     /// solar panel model name/number
-    pub modelName: String,
+    pub model_name: String,
 
     /// solar panel max output power
-    pub maximumPower: f32,
+    pub maximum_power: f32,
 
     /// solar panel temperature coefficient
-    pub temperatureCoef: f32,
+    pub temperature_coef: f32,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::is_normal;
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<SiteModule>();
+    }
 }

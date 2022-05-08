@@ -2,9 +2,9 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
-#[allow(non_snake_case)]
 /// Location of the SolarEdge inverter.
+#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct SiteLocation {
     /// Country of the SolarEdge inverter.
     pub country: String,
@@ -25,11 +25,22 @@ pub struct SiteLocation {
     pub zip: String, // seems US specific. should this be Option<String>?
 
     /// Time zone of the SolarEdge inverter.
-    pub timeZone: String,
+    pub time_zone: String,
 
     /// Country code (abbreviation) of the SolarEdge inverter.
-    pub countryCode: String,
+    pub country_code: String,
 
     /// State (abbreviation) of the SolarEdge inverter.
-    pub stateCode: String, // seems US specific. should this be Option<String>?
+    pub state_code: String, // seems US specific. should this be Option<String>?
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::is_normal;
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<SiteLocation>();
+    }
 }

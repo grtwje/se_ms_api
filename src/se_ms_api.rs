@@ -33,9 +33,37 @@
 //!}
 //! ```
 //! Supported API requests/responses include:
+//! * [CurrentVersionReq]/[CurrentVersionResp]
 //! * [SiteDetailsReq] / [SiteDetailsResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
+//! * [SupportedVersionsReq]/[SupportedVersionsResp]
 //!
+//! TODO:
+//! SitesList,
+//! SiteDataPeriod start/end dates,
+//! SiteDataPeriod bulk,
+//! SiteEnergy,
+//! SiteEnergy bulk,
+//! SiteTimeFrameEnergy,
+//! SiteTimeFrameEnergy bulk,
+//! SitePower,
+//! SitePower bulk,
+//! SiteOverview,
+//! SiteOverview bulk,
+//! SitePowerDetailed,
+//! SitePowerFlow,
+//! SiteStorageInformation,
+//! SiteImage,
+//! SiteEnvironmentalBenefits,
+//! SiteInstallerImage,
+//! SiteEquipmentList,
+//! SiteInventory,
+//! SiteInverterTechnicalData,
+//! SiteEquipmentChangeLog,
+//! AccountsList,
+//! SiteMetersData,
+//! SiteSensorList,
+//! SiteSensorData
 
 //#![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
@@ -63,6 +91,7 @@ const URL_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 /// Struct for accessing SolarEdge's monitoring server for a given site and api key.
 ///
 /// Used as the parameter for the send() function of all of the possible requests.
+#[derive(Clone, Debug, Default, PartialEq)]
 pub struct SolaredgeCredentials {
     url_start: String,
     site_id: String,
@@ -92,6 +121,9 @@ impl SolaredgeCredentials {
 }
 
 #[cfg(test)]
+pub(crate) fn is_normal<T: Sized + Send + Sync + Unpin>() {}
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
@@ -102,5 +134,10 @@ mod tests {
         assert_eq!(se.site_id, "id");
         assert_eq!(se.site_id(), "id");
         assert_eq!(se.url_end, "api_key=key");
+    }
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<SolaredgeCredentials>();
     }
 }

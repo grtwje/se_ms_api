@@ -1,48 +1,60 @@
 //! Module for handling units of time used by the SolarEdge server monitoring API.
 
-#[allow(non_camel_case_types)]
 /// Time units specified in SolarEdge server monitoring API requests and responses.
 /// Specifies the aggregation granularity of the data.
+#[derive(Clone, Debug, PartialEq)]
 pub enum TimeUnit {
     /// 15 minutes
-    QUARTER_OF_AN_HOUR,
+    QuarterOfAnHour,
 
     /// 60 minutes
-    HOUR,
+    Hour,
 
     /// 24 hours
-    DAY,
+    Day,
 
     /// 7 days
-    WEEK,
+    Week,
 
     /// Calendar month
-    MONTH,
+    Month,
 
     /// Calendar year
-    YEAR,
+    Year,
 }
 
 impl std::fmt::Display for TimeUnit {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         match *self {
-            TimeUnit::QUARTER_OF_AN_HOUR => write!(f, "QUARTER_OF_AN_HOUR"),
-            TimeUnit::HOUR => write!(f, "HOUR"),
-            TimeUnit::DAY => write!(f, "DAY"),
-            TimeUnit::WEEK => write!(f, "WEEK"),
-            TimeUnit::MONTH => write!(f, "MONTH"),
-            TimeUnit::YEAR => write!(f, "YEAR"),
+            TimeUnit::QuarterOfAnHour => write!(f, "QUARTER_OF_AN_HOUR"),
+            TimeUnit::Hour => write!(f, "HOUR"),
+            TimeUnit::Day => write!(f, "DAY"),
+            TimeUnit::Week => write!(f, "WEEK"),
+            TimeUnit::Month => write!(f, "MONTH"),
+            TimeUnit::Year => write!(f, "YEAR"),
         }
+    }
+}
+
+impl Default for TimeUnit {
+    fn default() -> TimeUnit {
+        TimeUnit::Day
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::is_normal;
 
     #[test]
     fn time_unit_fmt_unit_test() {
-        let t = TimeUnit::YEAR;
+        let t = TimeUnit::Year;
         assert_eq!(format!("{}", t), "YEAR");
+    }
+
+    #[test]
+    fn normal_types_unit_test() {
+        is_normal::<TimeUnit>();
     }
 }
