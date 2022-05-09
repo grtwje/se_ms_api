@@ -32,6 +32,9 @@
 //!    }
 //!}
 //! ```
+//! Due to the restrictions that SolarEdge imposes on this API, this library
+//! does not try to be performant. For example, it makes blocking HTTP requests.
+//!
 //! Supported API requests/responses include:
 //! * [CurrentVersionReq]/[CurrentVersionResp]
 //! * [SiteDetailsReq] / [SiteDetailsResp]
@@ -65,26 +68,32 @@
 //! SiteSensorList,
 //! SiteSensorData
 
-//#![warn(unused_crate_dependencies)]
+#![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
 #![warn(missing_docs)]
 
-pub mod site_details;
-pub use site_details::{SiteDetailsReq, SiteDetailsResp};
-pub mod site_energy_detailed;
-pub use site_energy_detailed::{SiteEnergyDetailedReq, SiteEnergyDetailedResp};
-pub mod current_version;
 pub use current_version::{CurrentVersionReq, CurrentVersionResp};
-pub mod supported_versions;
-pub use supported_versions::{SupportedVersionsReq, SupportedVersionsResp};
-pub mod date_value;
-pub mod meter_type;
+pub use error::{Error, ErrorKind};
 pub use meter_type::MeterType;
-pub mod meter_value;
-pub mod site_location;
-pub mod site_module;
-pub mod site_public_settings;
-pub mod time_unit;
+pub use site_details::{SiteDetailsReq, SiteDetailsResp};
+pub use site_energy_detailed::{SiteEnergyDetailedReq, SiteEnergyDetailedResp};
+pub use supported_versions::{SupportedVersionsReq, SupportedVersionsResp};
+
+mod current_version;
+mod date_value;
+mod error;
+mod meter_type;
+mod meter_value;
+mod site_details;
+mod site_energy_detailed;
+mod site_location;
+mod site_module;
+mod site_public_settings;
+mod supported_versions;
+mod time_unit;
+
+#[macro_use]
+extern crate lazy_static;
 
 const URL_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 
@@ -118,6 +127,11 @@ impl SolaredgeCredentials {
     pub fn site_id(&self) -> &str {
         &self.site_id
     }
+}
+
+lazy_static! {
+    pub(crate) static ref REQWEST_CLIENT: reqwest::blocking::Client =
+        reqwest::blocking::Client::new();
 }
 
 #[cfg(test)]

@@ -1,6 +1,7 @@
 //! Module for querying the API versions supported by the SolarEdge monitoring server.
 
-use crate::SolaredgeCredentials;
+use crate::error::Error;
+use crate::{SolaredgeCredentials, REQWEST_CLIENT};
 use serde::{Deserialize, Serialize};
 
 /// Supported versions request
@@ -36,21 +37,15 @@ impl SupportedVersionsReq {
     /// # Returns
     /// The SolarEdge response or an error string.
     /// Errors can occur on the request send or when parsing the response.
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SupportedVersionsResp, String> {
+    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SupportedVersionsResp, Error> {
         let url = format!(
             "{}version/supported?{}",
             solaredge.url_start, solaredge.url_end
         );
 
-        let res = match reqwest::blocking::get(&url) {
-            Ok(r) => r,
-            Err(e) => return Err(format!("reqwest get error {}", e)),
-        };
+        let res = REQWEST_CLIENT.get(&url).send()?;
 
-        let parsed = match res.json::<SupportedVersionsResp>() {
-            Ok(p) => p,
-            Err(e) => return Err(format!("JSON parse error {}", e)),
-        };
+        let parsed = res.json::<SupportedVersionsResp>()?;
 
         Ok(parsed)
     }
