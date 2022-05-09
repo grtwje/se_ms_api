@@ -1,10 +1,11 @@
 //! Module for detailed site energy measurements from meters such as consumption, export (feed-in), import (purchase), etc.
 
+use crate::error::Error;
 use crate::meter_type::MeterType;
 use crate::meter_value::MeterValue;
 use crate::time_unit::TimeUnit;
-use crate::SolaredgeCredentials;
 use crate::URL_TIME_FORMAT;
+use crate::{SolaredgeCredentials, REQWEST_CLIENT};
 use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request
@@ -92,7 +93,7 @@ impl SiteEnergyDetailedReq {
     /// # Returns
     /// The SolarEdge response or an error string.
     /// Errors can occur on the request send or when parsing the response.
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteEnergyDetailedResp, String> {
+    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteEnergyDetailedResp, Error> {
         let url = format!(
             "{}site/{}/energyDetails?{}{}{}{}{}",
             solaredge.url_start,
@@ -104,17 +105,9 @@ impl SiteEnergyDetailedReq {
             solaredge.url_end
         );
 
-        //println!("url: {}\n", url);
-        let res = match reqwest::blocking::get(&url) {
-            Ok(r) => r,
-            Err(e) => return Err(format!("reqwest get error {}", e)),
-        };
-        //println!("raw response: {:?}", res);
+        let res = REQWEST_CLIENT.get(&url).send()?;
 
-        let parsed = match res.json::<SiteEnergyDetailedResp>() {
-            Ok(p) => p,
-            Err(e) => return Err(format!("JSON parse error {}", e)),
-        };
+        let parsed = res.json::<SiteEnergyDetailedResp>()?;
 
         Ok(parsed)
     }

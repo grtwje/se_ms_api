@@ -1,9 +1,10 @@
 //! Module for site details requests and responses exchanged with the SolarEdge server monitoring API.
 
+use crate::error::Error;
 use crate::site_location::SiteLocation;
 use crate::site_module::SiteModule;
 use crate::site_public_settings::SitePublicSettings;
-use crate::SolaredgeCredentials;
+use crate::{SolaredgeCredentials, REQWEST_CLIENT};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -90,21 +91,15 @@ impl SiteDetailsReq {
     /// # Returns
     /// The SolarEdge response or an error string.
     /// Errors can occur on the request send or when parsing the response.
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteDetailsResp, String> {
+    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteDetailsResp, Error> {
         let url = format!(
             "{}site/{}/details?{}",
             solaredge.url_start, solaredge.site_id, solaredge.url_end
         );
 
-        let res = match reqwest::blocking::get(&url) {
-            Ok(r) => r,
-            Err(e) => return Err(format!("reqwest get error {}", e)),
-        };
+        let res = REQWEST_CLIENT.get(&url).send()?;
 
-        let parsed = match res.json::<SiteDetailsResp>() {
-            Ok(p) => p,
-            Err(e) => return Err(format!("JSON parse error: {}", e)),
-        };
+        let parsed = res.json::<SiteDetailsResp>()?;
 
         Ok(parsed)
     }
