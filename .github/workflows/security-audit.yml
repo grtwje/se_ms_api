@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: "0 0 2 * *" # 2nd day of month at 02:00
 jobs:
   security_audit:
     runs-on: ubuntu-latest
