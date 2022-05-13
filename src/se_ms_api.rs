@@ -14,16 +14,16 @@
 //!
 //! ```no_run
 //! extern crate se_ms_api;
-//! use se_ms_api::{SiteDetailsReq, SolaredgeCredentials};
+//! use se_ms_api::{SendReq, SiteDetailsReq, SolaredgeCredentials};
 //!
 //! let site_id = "my_site_id";
 //! let api_key = "my_api_key";
 //!
-//! let cred = SolaredgeCredentials::create(&site_id, &api_key); // (1)
-//! let req = SiteDetailsReq::new();                             // (2)
-//! let resp = req.send(&cred);                                  // (3)
+//! let cred = SolaredgeCredentials::new(&site_id, &api_key); // (1)
+//! let req = SiteDetailsReq::new();                          // (2)
+//! let resp = req.send(&cred);                               // (3)
 //!
-//! match resp {                                                 // (4)
+//! match resp {                                              // (4)
 //!    Ok(r) => {
 //!        println!("My site's status is {}.", r.details.status);
 //!    }
@@ -71,10 +71,12 @@
 #![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
 #![warn(missing_docs)]
+#![warn(missing_debug_implementations)]
 
 pub use current_version::{CurrentVersionReq, CurrentVersionResp};
 pub use error::{Error, ErrorKind};
 pub use meter_type::MeterType;
+use serde::Deserialize;
 pub use site_details::{SiteDetailsReq, SiteDetailsResp};
 pub use site_energy_detailed::{SiteEnergyDetailedReq, SiteEnergyDetailedResp};
 pub use supported_versions::{SupportedVersionsReq, SupportedVersionsResp};
@@ -95,6 +97,11 @@ mod time_unit;
 #[macro_use]
 extern crate lazy_static;
 
+lazy_static! {
+    static ref REQWEST_CLIENT: reqwest::blocking::Client = reqwest::blocking::Client::new();
+    static ref MONITORING_API_URL: String = "https://monitoringapi.solaredge.com/".to_string();
+}
+
 const URL_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 
 /// Struct for accessing SolarEdge's monitoring server for a given site and api key.
@@ -102,36 +109,52 @@ const URL_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
 /// Used as the parameter for the send() function of all of the possible requests.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct SolaredgeCredentials {
-    url_start: String,
     site_id: String,
-    url_end: String,
+    api_key: String,
 }
 
 impl SolaredgeCredentials {
-    const MONITORING_API_URL: &'static str = "https://monitoringapi.solaredge.com/";
-
     /// Create a Solaredge destination for the requests from the given site id and api_key.
-    pub fn create(site_id: &str, api_key: &str) -> Self {
-        let url_start = SolaredgeCredentials::MONITORING_API_URL.to_string();
+    pub fn new(site_id: &str, api_key: &str) -> Self {
         let site_id = site_id.to_string();
-        let url_end = format!("api_key={}", api_key);
+        let api_key = format!("api_key={}", api_key);
 
-        SolaredgeCredentials {
-            url_start,
-            site_id,
-            url_end,
-        }
+        SolaredgeCredentials { site_id, api_key }
     }
 
-    /// See the site ID bing used in the credentials.
+    /// See the site ID being used in the credentials.
     pub fn site_id(&self) -> &str {
         &self.site_id
     }
 }
 
-lazy_static! {
-    pub(crate) static ref REQWEST_CLIENT: reqwest::blocking::Client =
-        reqwest::blocking::Client::new();
+/// All Solaredge requests implement this trait since sending the request
+/// and getting the response is the same for all requests.
+pub trait SendReq<Resp> {
+    #[doc(hidden)]
+    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String;
+
+    /// Send the request to Solaredge and return the response.
+    ///
+    /// # Arguments
+    ///
+    /// * `solaredge` - SolarEdge credentials to use for sending
+    ///
+    /// # Returns
+    /// The SolarEdge response or an error string.
+    /// Errors can occur on the request send or when parsing the response.
+    fn send(&self, solaredge: &SolaredgeCredentials) -> Result<Resp, Error>
+    where
+        for<'de> Resp: Deserialize<'de>,
+    {
+        let url = self.build_url(solaredge);
+
+        let res = REQWEST_CLIENT.get(&url).send()?;
+
+        let parsed = res.json::<Resp>()?;
+
+        Ok(parsed)
+    }
 }
 
 #[cfg(test)]
@@ -143,11 +166,10 @@ mod tests {
 
     #[test]
     fn solaredge_credentials_unit_test() {
-        let se = SolaredgeCredentials::create("id", "key");
-        assert_eq!(se.url_start, SolaredgeCredentials::MONITORING_API_URL);
+        let se = SolaredgeCredentials::new("id", "key");
         assert_eq!(se.site_id, "id");
         assert_eq!(se.site_id(), "id");
-        assert_eq!(se.url_end, "api_key=key");
+        assert_eq!(se.api_key, "api_key=key");
     }
 
     #[test]

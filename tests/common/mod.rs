@@ -27,6 +27,6 @@ lazy_static! {
             panic!("Ill formed credentials file.");
         }
 
-        SolaredgeCredentials::create(&site_id, &api_key)
+        SolaredgeCredentials::new(&site_id, &api_key)
     };
 }

@@ -1,7 +1,6 @@
 //! Module for querying the API versions supported by the SolarEdge monitoring server.
 
-use crate::error::Error;
-use crate::{SolaredgeCredentials, REQWEST_CLIENT};
+use crate::{SendReq, SolaredgeCredentials, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
 /// Supported versions request
@@ -27,27 +26,14 @@ impl SupportedVersionsReq {
     pub fn new() -> Self {
         SupportedVersionsReq {}
     }
+}
 
-    /// Send the supported versions request to Solaredge and return the response.
-    ///
-    /// # Arguments
-    ///
-    /// * `solaredge` - SolarEdge credentials to use for sending
-    ///
-    /// # Returns
-    /// The SolarEdge response or an error string.
-    /// Errors can occur on the request send or when parsing the response.
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SupportedVersionsResp, Error> {
-        let url = format!(
+impl SendReq<SupportedVersionsResp> for SupportedVersionsReq {
+    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
+        format!(
             "{}version/supported?{}",
-            solaredge.url_start, solaredge.url_end
-        );
-
-        let res = REQWEST_CLIENT.get(&url).send()?;
-
-        let parsed = res.json::<SupportedVersionsResp>()?;
-
-        Ok(parsed)
+            *MONITORING_API_URL, solaredge.api_key,
+        )
     }
 }
 

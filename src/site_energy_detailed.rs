@@ -1,11 +1,10 @@
 //! Module for detailed site energy measurements from meters such as consumption, export (feed-in), import (purchase), etc.
 
-use crate::error::Error;
 use crate::meter_type::MeterType;
 use crate::meter_value::MeterValue;
 use crate::time_unit::TimeUnit;
 use crate::URL_TIME_FORMAT;
-use crate::{SolaredgeCredentials, REQWEST_CLIENT};
+use crate::{SendReq, SolaredgeCredentials, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request
@@ -83,33 +82,20 @@ impl SiteEnergyDetailedReq {
             meters,
         }
     }
+}
 
-    /// Send the site_energyDetails request to Solaredge and return the response.
-    ///
-    /// # Arguments
-    ///
-    /// * `solaredge` - SolarEdge credentials to use for sending
-    ///
-    /// # Returns
-    /// The SolarEdge response or an error string.
-    /// Errors can occur on the request send or when parsing the response.
-    pub fn send(&self, solaredge: &SolaredgeCredentials) -> Result<SiteEnergyDetailedResp, Error> {
-        let url = format!(
+impl SendReq<SiteEnergyDetailedResp> for SiteEnergyDetailedReq {
+    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
+        format!(
             "{}site/{}/energyDetails?{}{}{}{}{}",
-            solaredge.url_start,
+            *MONITORING_API_URL,
             solaredge.site_id,
             self.meters,
             self.time_unit,
             self.start_time,
             self.end_time,
-            solaredge.url_end
-        );
-
-        let res = REQWEST_CLIENT.get(&url).send()?;
-
-        let parsed = res.json::<SiteEnergyDetailedResp>()?;
-
-        Ok(parsed)
+            solaredge.api_key,
+        )
     }
 }
 

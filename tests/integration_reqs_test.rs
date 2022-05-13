@@ -6,7 +6,8 @@ extern crate lazy_static;
 mod common;
 
 use se_ms_api::{
-    CurrentVersionReq, MeterType, SiteDetailsReq, SiteEnergyDetailedReq, SupportedVersionsReq,
+    CurrentVersionReq, MeterType, SendReq, SiteDetailsReq, SiteEnergyDetailedReq,
+    SupportedVersionsReq,
 };
 
 #[test]
