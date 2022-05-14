@@ -72,14 +72,20 @@
 #![deny(unused_extern_crates)]
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
+#![warn(clippy::all, clippy::pedantic)]
+#![allow(clippy::doc_markdown)]
 
-pub use current_version::{CurrentVersionReq, CurrentVersionResp};
-pub use error::{Error, ErrorKind};
+pub use current_version::Req as CurrentVersionReq;
+pub use current_version::Resp as CurrentVersionResp;
+pub use error::{Error, Kind};
 pub use meter_type::MeterType;
 use serde::Deserialize;
-pub use site_details::{SiteDetailsReq, SiteDetailsResp};
-pub use site_energy_detailed::{SiteEnergyDetailedReq, SiteEnergyDetailedResp};
-pub use supported_versions::{SupportedVersionsReq, SupportedVersionsResp};
+pub use site_details::Req as SiteDetailsReq;
+pub use site_details::Resp as SiteDetailsResp;
+pub use site_energy_detailed::Req as SiteEnergyDetailedReq;
+pub use site_energy_detailed::Resp as SiteEnergyDetailedResp;
+pub use supported_versions::Req as SupportedVersionsReq;
+pub use supported_versions::Resp as SupportedVersionsResp;
 
 mod current_version;
 mod date_value;
@@ -115,6 +121,7 @@ pub struct SolaredgeCredentials {
 
 impl SolaredgeCredentials {
     /// Create a Solaredge destination for the requests from the given site id and api_key.
+    #[must_use]
     pub fn new(site_id: &str, api_key: &str) -> Self {
         let site_id = site_id.to_string();
         let api_key = format!("api_key={}", api_key);
@@ -123,6 +130,7 @@ impl SolaredgeCredentials {
     }
 
     /// See the site ID being used in the credentials.
+    #[must_use]
     pub fn site_id(&self) -> &str {
         &self.site_id
     }
@@ -142,6 +150,8 @@ pub trait SendReq<Resp> {
     ///
     /// # Returns
     /// The SolarEdge response or an error string.
+    ///
+    /// # Errors
     /// Errors can occur on the request send or when parsing the response.
     fn send(&self, solaredge: &SolaredgeCredentials) -> Result<Resp, Error>
     where

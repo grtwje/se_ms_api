@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request
 #[derive(Clone, Debug, Default, PartialEq)]
-pub struct SiteEnergyDetailedReq {
+pub struct Req {
     start_time: String,
     end_time: String,
     time_unit: String,
@@ -19,7 +19,7 @@ pub struct SiteEnergyDetailedReq {
 /// site_energyDetails response
 #[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
-pub struct SiteEnergyDetailedResp {
+pub struct Resp {
     /// Energy details
     pub energy_details: EnergyDetails,
 }
@@ -38,7 +38,7 @@ pub struct EnergyDetails {
     pub meters: Vec<MeterValue>,
 }
 
-impl SiteEnergyDetailedReq {
+impl Req {
     /// Create an energy details request message that can be sent to SolarEdge.
     ///
     /// # Arguments
@@ -49,6 +49,7 @@ impl SiteEnergyDetailedReq {
     ///                  For the time period requested, energy detail values will be
     ///                  chunked into units of this size.
     /// * `meters`     - meter types to collect energy details for
+    #[must_use]
     pub fn new(
         start_time: chrono::NaiveDateTime,
         end_time: chrono::NaiveDateTime,
@@ -68,14 +69,14 @@ impl SiteEnergyDetailedReq {
             Some(m) => format!(
                 "meters={}&",
                 m.iter()
-                    .map(|x| x.to_string())
+                    .map(MeterType::to_string)
                     .collect::<Vec<_>>()
                     .join(",")
             ),
             None => "".to_string(),
         };
 
-        SiteEnergyDetailedReq {
+        Req {
             start_time,
             end_time,
             time_unit,
@@ -84,7 +85,7 @@ impl SiteEnergyDetailedReq {
     }
 }
 
-impl SendReq<SiteEnergyDetailedResp> for SiteEnergyDetailedReq {
+impl SendReq<Resp> for Req {
     fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
         format!(
             "{}site/{}/energyDetails?{}{}{}{}{}",
@@ -108,21 +109,21 @@ mod tests {
     #[test]
     fn site_energy_detailed_req_new_unit_test() {
         let dt = "2022-01-01 00:00:00";
-        let ndt = match NaiveDateTime::parse_from_str(dt, "%Y-%m-%d %H:%M:%S") {
-            Ok(ndt) => ndt,
-            Err(_) => panic!("test failed"),
-        };
-        let req = SiteEnergyDetailedReq::new(ndt, ndt, None, None);
-        assert_eq!(req.start_time, format!("startTime={}&", dt));
-        assert_eq!(req.end_time, format!("endTime={}&", dt));
-        assert_eq!(req.time_unit, "");
-        assert_eq!(req.meters, "");
+        if let Ok(ndt) = NaiveDateTime::parse_from_str(dt, "%Y-%m-%d %H:%M:%S") {
+            let req = Req::new(ndt, ndt, None, None);
+            assert_eq!(req.start_time, format!("startTime={}&", dt));
+            assert_eq!(req.end_time, format!("endTime={}&", dt));
+            assert_eq!(req.time_unit, "");
+            assert_eq!(req.meters, "");
+        } else {
+            panic!("test failed");
+        }
     }
 
     #[test]
     fn normal_types_unit_test() {
-        is_normal::<SiteEnergyDetailedReq>();
-        is_normal::<SiteEnergyDetailedResp>();
+        is_normal::<Req>();
+        is_normal::<Resp>();
         is_normal::<EnergyDetails>();
     }
 }
