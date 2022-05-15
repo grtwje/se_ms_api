@@ -36,10 +36,11 @@
 //! does not try to be performant. For example, it makes blocking HTTP requests.
 //!
 //! Supported API requests/responses include:
-//! * [CurrentVersionReq]/[CurrentVersionResp]
+//! * [CurrentVersionReq] / [CurrentVersionResp]
 //! * [SiteDetailsReq] / [SiteDetailsResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
-//! * [SupportedVersionsReq]/[SupportedVersionsResp]
+//! * [SitePowerDetailedReq] / [SitePowerDetailedResp]
+//! * [SupportedVersionsReq] / [SupportedVersionsResp]
 //!
 //! TODO:
 //! SitesList,
@@ -53,7 +54,6 @@
 //! SitePower bulk,
 //! SiteOverview,
 //! SiteOverview bulk,
-//! SitePowerDetailed,
 //! SitePowerFlow,
 //! SiteStorageInformation,
 //! SiteImage,
@@ -84,6 +84,8 @@ pub use site_details::Req as SiteDetailsReq;
 pub use site_details::Resp as SiteDetailsResp;
 pub use site_energy_detailed::Req as SiteEnergyDetailedReq;
 pub use site_energy_detailed::Resp as SiteEnergyDetailedResp;
+pub use site_power_detailed::Req as SitePowerDetailedReq;
+pub use site_power_detailed::Resp as SitePowerDetailedResp;
 pub use supported_versions::Req as SupportedVersionsReq;
 pub use supported_versions::Resp as SupportedVersionsResp;
 
@@ -96,6 +98,7 @@ mod site_details;
 mod site_energy_detailed;
 mod site_location;
 mod site_module;
+mod site_power_detailed;
 mod site_public_settings;
 mod supported_versions;
 mod time_unit;

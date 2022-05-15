@@ -7,7 +7,7 @@ mod common;
 
 use se_ms_api::{
     CurrentVersionReq, MeterType, SendReq, SiteDetailsReq, SiteEnergyDetailedReq,
-    SupportedVersionsReq,
+    SitePowerDetailedReq, SupportedVersionsReq,
 };
 
 #[test]
@@ -104,4 +104,43 @@ fn site_details_integration_test() {
             panic!("Unexpected SiteDetails response: {:?}", e);
         }
     }
+}
+
+#[test]
+fn site_power_detailed_integration_test() {
+    let start_ndt = match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::TIME_FORMAT)
+    {
+        Ok(dt) => dt,
+        Err(error) => panic!("Error parsing start date: {}", error),
+    };
+
+    let end_ndt = match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::TIME_FORMAT) {
+        Ok(dt) => dt,
+        Err(error) => panic!("Error parsing end date: {}", error),
+    };
+
+    let req = SitePowerDetailedReq::new(start_ndt, end_ndt, Some(vec![MeterType::Purchased]));
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.power_details.time_unit, "QUARTER_OF_AN_HOUR");
+            assert_eq!(r.power_details.unit, "W");
+            assert_eq!(r.power_details.meters.len(), 1);
+            assert_eq!(r.power_details.meters[0].meter_type, MeterType::Purchased);
+            assert_eq!(r.power_details.meters[0].values.len(), 2880);
+
+            let mut self_consumption: f32 = 0.0;
+            for v in &r.power_details.meters[0].values {
+                if let Some(value) = v.value {
+                    self_consumption += value;
+                }
+            }
+            assert!(self_consumption == 2277237.5);
+        }
+        Err(e) => {
+            panic!("Unexpected SitePowerDetailedReq response: {:?}", e);
+        }
+    };
 }
