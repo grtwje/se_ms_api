@@ -5,11 +5,11 @@ use serde::{Deserialize, Serialize};
 
 /// Supported versions request
 #[derive(Clone, Debug, PartialEq)]
-pub struct SupportedVersionsReq;
+pub struct Req;
 
 /// Supported versions response
 #[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
-pub struct SupportedVersionsResp {
+pub struct Resp {
     /// An array of all the API versions supported by the server
     pub supported: Vec<Release>,
 }
@@ -21,14 +21,15 @@ pub struct Release {
     pub release: String,
 }
 
-impl SupportedVersionsReq {
+impl Req {
     /// Create a supported versions request message that can be sent to SolarEdge.
+    #[must_use]
     pub fn new() -> Self {
-        SupportedVersionsReq {}
+        Req {}
     }
 }
 
-impl SendReq<SupportedVersionsResp> for SupportedVersionsReq {
+impl SendReq<Resp> for Req {
     fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
         format!(
             "{}version/supported?{}",
@@ -37,7 +38,7 @@ impl SendReq<SupportedVersionsResp> for SupportedVersionsReq {
     }
 }
 
-impl Default for SupportedVersionsReq {
+impl Default for Req {
     fn default() -> Self {
         Self::new()
     }
@@ -50,8 +51,8 @@ mod tests {
 
     #[test]
     fn normal_types_unit_test() {
-        is_normal::<SupportedVersionsReq>();
-        is_normal::<SupportedVersionsResp>();
+        is_normal::<Req>();
+        is_normal::<Resp>();
         is_normal::<Release>();
     }
 }

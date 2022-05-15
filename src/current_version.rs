@@ -5,11 +5,11 @@ use serde::{Deserialize, Serialize};
 
 /// Current version request
 #[derive(Clone, Debug, PartialEq)]
-pub struct CurrentVersionReq;
+pub struct Req;
 
 /// Current version response
 #[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
-pub struct CurrentVersionResp {
+pub struct Resp {
     /// The API version running on the server
     pub version: Version,
 }
@@ -21,14 +21,15 @@ pub struct Version {
     pub release: String,
 }
 
-impl CurrentVersionReq {
+impl Req {
     /// Create a current version request message that can be sent to SolarEdge.
+    #[must_use]
     pub fn new() -> Self {
-        CurrentVersionReq {}
+        Req {}
     }
 }
 
-impl SendReq<CurrentVersionResp> for CurrentVersionReq {
+impl SendReq<Resp> for Req {
     fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
         format!(
             "{}version/current?{}",
@@ -37,7 +38,7 @@ impl SendReq<CurrentVersionResp> for CurrentVersionReq {
     }
 }
 
-impl Default for CurrentVersionReq {
+impl Default for Req {
     fn default() -> Self {
         Self::new()
     }
@@ -50,8 +51,8 @@ mod tests {
 
     #[test]
     fn normal_types_unit_test() {
-        is_normal::<CurrentVersionReq>();
-        is_normal::<CurrentVersionResp>();
+        is_normal::<Req>();
+        is_normal::<Resp>();
         is_normal::<Version>();
     }
 }

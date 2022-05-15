@@ -9,11 +9,11 @@ use std::collections::HashMap;
 
 /// site_details request
 #[derive(Clone, Debug, PartialEq)]
-pub struct SiteDetailsReq;
+pub struct Req;
 
 /// site_details response
 #[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
-pub struct SiteDetailsResp {
+pub struct Resp {
     /// Detailed information about the monitoring site
     pub details: SiteDetails,
 }
@@ -75,14 +75,15 @@ pub struct SiteDetails {
     pub public_settings: SitePublicSettings,
 }
 
-impl SiteDetailsReq {
+impl Req {
     /// Create a site details request message that can be sent to SolarEdge.
+    #[must_use]
     pub fn new() -> Self {
-        SiteDetailsReq {}
+        Req {}
     }
 }
 
-impl SendReq<SiteDetailsResp> for SiteDetailsReq {
+impl SendReq<Resp> for Req {
     fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
         format!(
             "{}site/{}/details?{}",
@@ -91,7 +92,7 @@ impl SendReq<SiteDetailsResp> for SiteDetailsReq {
     }
 }
 
-impl Default for SiteDetailsReq {
+impl Default for Req {
     fn default() -> Self {
         Self::new()
     }
@@ -104,8 +105,8 @@ mod tests {
 
     #[test]
     fn normal_types_unit_test() {
-        is_normal::<SiteDetailsReq>();
-        is_normal::<SiteDetailsResp>();
+        is_normal::<Req>();
+        is_normal::<Resp>();
         is_normal::<SiteDetails>();
     }
 }

@@ -7,16 +7,17 @@ use std::fmt;
 /// or when trying to parse the response from the server.
 #[derive(Debug)]
 pub struct Error {
-    kind: ErrorKind,
+    kind: Kind,
 }
 
 impl Error {
-    pub(crate) fn new(kind: ErrorKind) -> Error {
+    pub(crate) fn new(kind: Kind) -> Error {
         Error { kind }
     }
 
     /// Convenience function for getting the kind of error.
-    pub fn kind(&self) -> &ErrorKind {
+    #[must_use]
+    pub fn kind(&self) -> &Kind {
         &self.kind
     }
 }
@@ -24,7 +25,7 @@ impl Error {
 /// The different kinds of errors that can occur.
 #[derive(Debug)]
 #[non_exhaustive]
-pub enum ErrorKind {
+pub enum Kind {
     /// An error returned from the reqwest crate.
     ReqwestError(reqwest::Error),
 }
@@ -32,7 +33,7 @@ pub enum ErrorKind {
 impl error::Error for Error {
     fn description(&self) -> &str {
         match self.kind {
-            ErrorKind::ReqwestError(_) => "Reqwest error",
+            Kind::ReqwestError(_) => "Reqwest error",
         }
     }
 }
@@ -40,13 +41,13 @@ impl error::Error for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self.kind {
-            ErrorKind::ReqwestError(s) => write!(f, "Reqwest Error: HTTP status-code{}", s),
+            Kind::ReqwestError(s) => write!(f, "Reqwest Error: HTTP status-code{}", s),
         }
     }
 }
 
 impl From<reqwest::Error> for Error {
     fn from(e: reqwest::Error) -> Self {
-        Error::new(ErrorKind::ReqwestError(e))
+        Error::new(Kind::ReqwestError(e))
     }
 }
