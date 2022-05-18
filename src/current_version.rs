@@ -1,6 +1,6 @@
 //! Module for querying the current API version of the SolarEdge monitoring server.
 
-use crate::{SendReq, SolaredgeCredentials, MONITORING_API_URL};
+use crate::{SendReq, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
 /// Current version request
@@ -30,11 +30,8 @@ impl Req {
 }
 
 impl SendReq<Resp> for Req {
-    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
-        format!(
-            "{}version/current?{}",
-            *MONITORING_API_URL, solaredge.api_key,
-        )
+    fn build_url(&self, _: &str, api_key: &str) -> String {
+        format!("{}version/current?{}", *MONITORING_API_URL, api_key,)
     }
 }
 

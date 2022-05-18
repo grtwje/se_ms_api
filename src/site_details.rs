@@ -3,7 +3,7 @@
 use crate::site_location::SiteLocation;
 use crate::site_module::SiteModule;
 use crate::site_public_settings::SitePublicSettings;
-use crate::{SendReq, SolaredgeCredentials, MONITORING_API_URL};
+use crate::{SendReq, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -84,10 +84,10 @@ impl Req {
 }
 
 impl SendReq<Resp> for Req {
-    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
+    fn build_url(&self, site_id: &str, api_key: &str) -> String {
         format!(
             "{}site/{}/details?{}",
-            *MONITORING_API_URL, solaredge.site_id, solaredge.api_key,
+            *MONITORING_API_URL, site_id, api_key,
         )
     }
 }

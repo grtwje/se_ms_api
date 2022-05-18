@@ -4,7 +4,7 @@ use crate::meter_type::MeterType;
 use crate::meter_value::MeterValue;
 use crate::time_unit::TimeUnit;
 use crate::URL_TIME_FORMAT;
-use crate::{SendReq, SolaredgeCredentials, MONITORING_API_URL};
+use crate::{SendReq, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request
@@ -86,16 +86,16 @@ impl Req {
 }
 
 impl SendReq<Resp> for Req {
-    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
+    fn build_url(&self, site_id: &str, api_key: &str) -> String {
         format!(
             "{}site/{}/energyDetails?{}{}{}{}{}",
             *MONITORING_API_URL,
-            solaredge.site_id,
+            site_id,
             self.meters,
             self.time_unit,
             self.start_time,
             self.end_time,
-            solaredge.api_key,
+            api_key,
         )
     }
 }
