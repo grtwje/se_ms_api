@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{Local, NaiveDateTime};
 
 #[macro_use]
 extern crate lazy_static;
@@ -6,8 +6,8 @@ extern crate lazy_static;
 mod common;
 
 use se_ms_api::{
-    CurrentVersionReq, MeterType, SendReq, SiteDetailsReq, SiteEnergyDetailedReq,
-    SitePowerDetailedReq, SupportedVersionsReq,
+    CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
+    SiteEnergyDetailedReq, SitePowerDetailedReq, SupportedVersionsReq,
 };
 
 #[test]
@@ -143,4 +143,30 @@ fn site_power_detailed_integration_test() {
             panic!("Unexpected SitePowerDetailedReq response: {:?}", e);
         }
     };
+}
+
+#[test]
+fn site_data_period_integration_test() {
+    let req = SiteDataPeriodReq::new();
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            if let Some(sd) = r.data_period.start_date {
+                assert_eq!(sd, "2018-02-08");
+            } else {
+                panic!("SiteDataPeriod start date is none.")
+            }
+            if let Some(ed) = r.data_period.end_date {
+                let mut today = Local::today().to_string();
+                today.truncate(10);
+                assert_eq!(ed, today);
+            } else {
+                panic!("SiteDataPeriod end date is none.")
+            }
+        }
+        Err(e) => {
+            panic!("Unexpected SiteDataPeriod response: {:?}", e);
+        }
+    }
 }

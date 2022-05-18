@@ -37,6 +37,7 @@
 //!
 //! Supported API requests/responses include:
 //! * [CurrentVersionReq] / [CurrentVersionResp]
+//! * [SiteDataPeriodReq] / [SiteDataPeriodResp]
 //! * [SiteDetailsReq] / [SiteDetailsResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
 //! * [SitePowerDetailedReq] / [SitePowerDetailedResp]
@@ -44,8 +45,7 @@
 //!
 //! TODO:
 //! SitesList,
-//! SiteDataPeriod start/end dates & bulk,
-//! SiteEnergy & bulk,,
+//! SiteEnergy & bulk,
 //! SiteTimeFrameEnergy & bulk,
 //! SitePower & bulk,
 //! SiteOverview & bulk,
@@ -75,6 +75,8 @@ pub use current_version::Resp as CurrentVersionResp;
 pub use error::{Error, Kind};
 pub use meter_type::MeterType;
 use serde::Deserialize;
+pub use site_data_period::Req as SiteDataPeriodReq;
+pub use site_data_period::Resp as SiteDataPeriodResp;
 pub use site_details::Req as SiteDetailsReq;
 pub use site_details::Resp as SiteDetailsResp;
 pub use site_energy_detailed::Req as SiteEnergyDetailedReq;
