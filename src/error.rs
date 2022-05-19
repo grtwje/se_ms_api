@@ -31,6 +31,9 @@ pub enum Kind {
 
     /// Attempted bulk operation, but bulk list is empty.
     BulkListNone,
+
+    /// HTTP error from sending a request.
+    HttpErrorStatus(String, String),
 }
 
 impl error::Error for Error {
@@ -38,6 +41,7 @@ impl error::Error for Error {
         match self.kind {
             Kind::ReqwestError(_) => "Reqwest error",
             Kind::BulkListNone => "Tried to use empty bulk list.",
+            Kind::HttpErrorStatus(_, _) => "HTTP error",
         }
     }
 }
@@ -47,6 +51,7 @@ impl fmt::Display for Error {
         match &self.kind {
             Kind::ReqwestError(s) => write!(f, "Reqwest Error: HTTP status-code{}", s),
             Kind::BulkListNone => write!(f, "Empty bulk list error"),
+            Kind::HttpErrorStatus(s, t) => write!(f, "HTTP error: {}: {}", s, t),
         }
     }
 }

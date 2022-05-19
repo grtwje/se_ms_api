@@ -42,11 +42,11 @@
 //! * [SiteEnergyReq] / [SiteEnergyResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
 //! * [SitePowerDetailedReq] / [SitePowerDetailedResp]
+//! * [SiteTimeFrameEnergyReq] / [SiteTimeFrameEnergyResp]
 //! * [SupportedVersionsReq] / [SupportedVersionsResp]
 //!
 //! TODO:
 //! SitesList,
-//! SiteTimeFrameEnergy & bulk,
 //! SitePower & bulk,
 //! SiteOverview & bulk,
 //! SitePowerFlow,
@@ -85,6 +85,8 @@ pub use site_energy_detailed::Req as SiteEnergyDetailedReq;
 pub use site_energy_detailed::Resp as SiteEnergyDetailedResp;
 pub use site_power_detailed::Req as SitePowerDetailedReq;
 pub use site_power_detailed::Resp as SitePowerDetailedResp;
+pub use site_time_frame_energy::Req as SiteTimeFrameEnergyReq;
+pub use site_time_frame_energy::Resp as SiteTimeFrameEnergyResp;
 pub use supported_versions::Req as SupportedVersionsReq;
 pub use supported_versions::Resp as SupportedVersionsResp;
 
@@ -101,6 +103,7 @@ mod site_location;
 mod site_module;
 mod site_power_detailed;
 mod site_public_settings;
+mod site_time_frame_energy;
 mod supported_versions;
 mod time_unit;
 
@@ -177,14 +180,27 @@ pub trait SendReq<Resp> {
     where
         for<'de> Resp: Deserialize<'de>,
     {
-        //let res = reqwest::blocking::get(url)?.text()?;
-        //panic!("url is {}, res is: {:?}", url, res);
-
         let res = REQWEST_CLIENT.get(url).send()?;
 
-        let parsed = res.json::<Resp>()?;
+        if res.status().is_success() {
+            let parsed = res.json::<Resp>()?;
 
-        Ok(parsed)
+            Ok(parsed)
+        } else {
+            let reason: String;
+            match res.status().canonical_reason() {
+                Some(r) => reason = r.to_string(),
+                None => reason = res.status().as_str().to_string(),
+            };
+
+            let text: String;
+            match res.text() {
+                Ok(t) => text = t,
+                Err(_) => text = "".to_string(),
+            };
+
+            Err(Error::new(Kind::HttpErrorStatus(reason, text)))
+        }
     }
 
     /// Send the request to Solaredge and return the response.

@@ -7,7 +7,8 @@ mod common;
 
 use se_ms_api::{
     CurrentVersionReq, Kind, MeterType, SendReq, SendReqBulk, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SiteEnergyReq, SitePowerDetailedReq, SupportedVersionsReq,
+    SiteEnergyDetailedReq, SiteEnergyReq, SitePowerDetailedReq, SiteTimeFrameEnergyReq,
+    SupportedVersionsReq,
 };
 
 #[test]
@@ -229,6 +230,41 @@ fn site_energy_integration_test() {
         Err(e) => match e.kind() {
             Kind::BulkListNone => assert!(true),
             u => panic!("Unexpected SiteEnergy error: {:?}", u),
+        },
+    }
+}
+
+#[test]
+fn site_time_frame_energy_integration_test() {
+    let start_date = match NaiveDate::parse_from_str("2022-01-01", common::DATE_FORMAT) {
+        Ok(dt) => dt,
+        Err(error) => panic!("Error parsing start date: {}", error),
+    };
+
+    let end_date = match NaiveDate::parse_from_str("2022-01-02", common::DATE_FORMAT) {
+        Ok(dt) => dt,
+        Err(error) => panic!("Error parsing end date: {}", error),
+    };
+
+    let req = SiteTimeFrameEnergyReq::new(start_date, end_date);
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.time_frame_energy.unit, "Wh");
+            assert_eq!(r.time_frame_energy.energy, 12896.0);
+        }
+        Err(e) => panic!("Unexpected SiteTimeFrameEnergy response: {:?}", e),
+    }
+
+    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
+    match resp {
+        Ok(r) => {
+            panic!("SiteTimeFrameEnergy unexpected success: {:?}", r)
+        }
+        Err(e) => match e.kind() {
+            Kind::BulkListNone => assert!(true),
+            u => panic!("Unexpected SiteTimeFrameEnergy error: {:?}", u),
         },
     }
 }
