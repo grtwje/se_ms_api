@@ -39,13 +39,13 @@
 //! * [CurrentVersionReq] / [CurrentVersionResp]
 //! * [SiteDataPeriodReq] / [SiteDataPeriodResp]
 //! * [SiteDetailsReq] / [SiteDetailsResp]
+//! * [SiteEnergyReq] / [SiteEnergyResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
 //! * [SitePowerDetailedReq] / [SitePowerDetailedResp]
 //! * [SupportedVersionsReq] / [SupportedVersionsResp]
 //!
 //! TODO:
 //! SitesList,
-//! SiteEnergy & bulk,
 //! SiteTimeFrameEnergy & bulk,
 //! SitePower & bulk,
 //! SiteOverview & bulk,
@@ -79,6 +79,8 @@ pub use site_data_period::Req as SiteDataPeriodReq;
 pub use site_data_period::Resp as SiteDataPeriodResp;
 pub use site_details::Req as SiteDetailsReq;
 pub use site_details::Resp as SiteDetailsResp;
+pub use site_energy::Req as SiteEnergyReq;
+pub use site_energy::Resp as SiteEnergyResp;
 pub use site_energy_detailed::Req as SiteEnergyDetailedReq;
 pub use site_energy_detailed::Resp as SiteEnergyDetailedResp;
 pub use site_power_detailed::Req as SitePowerDetailedReq;
@@ -93,6 +95,7 @@ mod meter_type;
 mod meter_value;
 mod site_data_period;
 mod site_details;
+mod site_energy;
 mod site_energy_detailed;
 mod site_location;
 mod site_module;
@@ -109,7 +112,8 @@ lazy_static! {
     static ref MONITORING_API_URL: String = "https://monitoringapi.solaredge.com/".to_string();
 }
 
-const URL_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
+const URL_DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
+const URL_DATE_FORMAT: &str = "%Y-%m-%d";
 
 /// Struct for accessing SolarEdge's monitoring server for a given site and api key.
 ///
@@ -173,6 +177,9 @@ pub trait SendReq<Resp> {
     where
         for<'de> Resp: Deserialize<'de>,
     {
+        //let res = reqwest::blocking::get(url)?.text()?;
+        //panic!("url is {}, res is: {:?}", url, res);
+
         let res = REQWEST_CLIENT.get(url).send()?;
 
         let parsed = res.json::<Resp>()?;
@@ -220,7 +227,17 @@ pub trait SendReqBulk<Resp>: SendReq<Resp> {
     /// Also it is an error if the bulk list is empty.
     fn send_bulk(&self, solaredge: &SolaredgeCredentials) -> Result<Resp, Error>
     where
-        for<'de> Resp: Deserialize<'de>;
+        for<'de> Resp: Deserialize<'de>,
+    {
+        match &solaredge.bulk_list {
+            Some(b) => {
+                let url = self.build_url(&b, &solaredge.api_key);
+
+                self.send_helper(&url)
+            }
+            None => Err(Error::new(Kind::BulkListNone)),
+        }
+    }
 }
 
 #[cfg(test)]

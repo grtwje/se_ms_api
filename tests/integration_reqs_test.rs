@@ -1,4 +1,4 @@
-use chrono::{Local, NaiveDateTime};
+use chrono::{Local, NaiveDate, NaiveDateTime};
 
 #[macro_use]
 extern crate lazy_static;
@@ -6,22 +6,23 @@ extern crate lazy_static;
 mod common;
 
 use se_ms_api::{
-    CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SitePowerDetailedReq, SupportedVersionsReq,
+    CurrentVersionReq, Kind, MeterType, SendReq, SendReqBulk, SiteDataPeriodReq, SiteDetailsReq,
+    SiteEnergyDetailedReq, SiteEnergyReq, SitePowerDetailedReq, SupportedVersionsReq,
 };
 
 #[test]
 fn site_energy_detailed_integration_test() {
-    let start_ndt = match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::TIME_FORMAT)
-    {
-        Ok(dt) => dt,
-        Err(error) => panic!("Error parsing start date: {}", error),
-    };
+    let start_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing start date: {}", error),
+        };
 
-    let end_ndt = match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::TIME_FORMAT) {
-        Ok(dt) => dt,
-        Err(error) => panic!("Error parsing end date: {}", error),
-    };
+    let end_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing end date: {}", error),
+        };
 
     let req = SiteEnergyDetailedReq::new(
         start_ndt,
@@ -108,16 +109,17 @@ fn site_details_integration_test() {
 
 #[test]
 fn site_power_detailed_integration_test() {
-    let start_ndt = match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::TIME_FORMAT)
-    {
-        Ok(dt) => dt,
-        Err(error) => panic!("Error parsing start date: {}", error),
-    };
+    let start_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing start date: {}", error),
+        };
 
-    let end_ndt = match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::TIME_FORMAT) {
-        Ok(dt) => dt,
-        Err(error) => panic!("Error parsing end date: {}", error),
-    };
+    let end_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing end date: {}", error),
+        };
 
     let req = SitePowerDetailedReq::new(start_ndt, end_ndt, Some(vec![MeterType::Purchased]));
 
@@ -168,5 +170,65 @@ fn site_data_period_integration_test() {
         Err(e) => {
             panic!("Unexpected SiteDataPeriod response: {:?}", e);
         }
+    }
+
+    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
+    match resp {
+        Ok(r) => {
+            panic!("SiteDataPeriod unexpected success: {:?}", r)
+        }
+        Err(e) => match e.kind() {
+            Kind::BulkListNone => assert!(true),
+            u => panic!("Unexpected SiteDataPeriod error: {:?}", u),
+        },
+    }
+}
+
+#[test]
+fn site_energy_integration_test() {
+    let start_date = match NaiveDate::parse_from_str("2022-01-01", common::DATE_FORMAT) {
+        Ok(dt) => dt,
+        Err(error) => panic!("Error parsing start date: {}", error),
+    };
+
+    let end_date = match NaiveDate::parse_from_str("2022-01-02", common::DATE_FORMAT) {
+        Ok(dt) => dt,
+        Err(error) => panic!("Error parsing end date: {}", error),
+    };
+
+    let req = SiteEnergyReq::new(start_date, end_date, None);
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.energy.time_unit, "DAY");
+            assert_eq!(r.energy.unit, "Wh");
+            assert_eq!(r.energy.values.len(), 2);
+            assert_eq!(r.energy.values[0].date, "2022-01-01 00:00:00");
+            assert_eq!(r.energy.values[1].date, "2022-01-02 00:00:00");
+
+            if let Some(v) = r.energy.values[0].value {
+                assert_eq!(v, 12926.0);
+            } else {
+                panic!("Missing value.");
+            }
+            if let Some(v) = r.energy.values[1].value {
+                assert_eq!(v, 4419.0);
+            } else {
+                panic!("Missing value.");
+            }
+        }
+        Err(e) => panic!("Unexpected SiteEnergy response: {:?}", e),
+    }
+
+    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
+    match resp {
+        Ok(r) => {
+            panic!("SiteEnergy unexpected success: {:?}", r)
+        }
+        Err(e) => match e.kind() {
+            Kind::BulkListNone => assert!(true),
+            u => panic!("Unexpected SiteEnergy error: {:?}", u),
+        },
     }
 }

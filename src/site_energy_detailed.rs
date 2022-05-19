@@ -3,7 +3,7 @@
 use crate::meter_type::MeterType;
 use crate::meter_value::MeterValue;
 use crate::time_unit::TimeUnit;
-use crate::URL_TIME_FORMAT;
+use crate::URL_DATE_TIME_FORMAT;
 use crate::{SendReq, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
@@ -56,9 +56,9 @@ impl Req {
         time_unit: Option<TimeUnit>,
         meters: Option<Vec<MeterType>>,
     ) -> Self {
-        let start_time = format!("startTime={}&", start_time.format(URL_TIME_FORMAT));
+        let start_time = format!("startTime={}&", start_time.format(URL_DATE_TIME_FORMAT));
 
-        let end_time = format!("endTime={}&", end_time.format(URL_TIME_FORMAT));
+        let end_time = format!("endTime={}&", end_time.format(URL_DATE_TIME_FORMAT));
 
         let time_unit = match time_unit {
             Some(t) => format!("timeUnit={}&", t),

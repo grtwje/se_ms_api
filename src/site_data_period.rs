@@ -1,6 +1,6 @@
 //! Module for querying the energy production start and end dates of the site.
 
-use crate::{Error, Kind, SendReq, SendReqBulk, SolaredgeCredentials, MONITORING_API_URL};
+use crate::{SendReq, SendReqBulk, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
 /// site_data_period request
@@ -42,21 +42,7 @@ impl SendReq<Resp> for Req {
     }
 }
 
-impl SendReqBulk<Resp> for Req {
-    fn send_bulk(&self, solaredge: &SolaredgeCredentials) -> Result<Resp, Error>
-    where
-        for<'de> Resp: Deserialize<'de>,
-    {
-        match &solaredge.bulk_list {
-            Some(b) => {
-                let url = self.build_url(&b, &solaredge.api_key);
-
-                self.send_helper(&url)
-            }
-            None => Err(Error::new(Kind::BulkListNone)),
-        }
-    }
-}
+impl SendReqBulk<Resp> for Req {}
 
 impl Default for Req {
     fn default() -> Self {

@@ -2,7 +2,8 @@ use se_ms_api::SolaredgeCredentials;
 use std::env;
 use std::fs;
 
-pub const TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
+pub const DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
+pub const DATE_FORMAT: &str = "%Y-%m-%d";
 
 const TEST_CREDENTIALS_FILE: &str = "test_credentials.txt";
 
