@@ -1,7 +1,7 @@
 //! Module for detailed site energy measurements from meters such as consumption, export (feed-in), import (purchase), etc.
 
 use crate::{MeterType, MeterValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_TIME_FORMAT};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// site_energyDetails request
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -13,7 +13,7 @@ pub struct Req {
 }
 
 /// site_energyDetails response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Resp {
     /// Energy details
@@ -21,7 +21,7 @@ pub struct Resp {
 }
 
 /// Energy details
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct EnergyDetails {
     /// Granularity of the energy detail values (should match the request)

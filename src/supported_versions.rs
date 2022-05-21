@@ -1,21 +1,21 @@
 //! Module for querying the API versions supported by the SolarEdge monitoring server.
 
 use crate::{SendReq, MONITORING_API_URL};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Supported versions request
 #[derive(Clone, Debug, PartialEq)]
 pub struct Req;
 
 /// Supported versions response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 pub struct Resp {
     /// An array of all the API versions supported by the server
     pub supported: Vec<Release>,
 }
 
 /// A release version supported by the server
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 pub struct Release {
     /// A release number supported by the server in <major.minor.revision> format.
     pub release: String,

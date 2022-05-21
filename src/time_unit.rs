@@ -1,10 +1,10 @@
 //! Module for handling units of time used by the SolarEdge server monitoring API.
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Time units specified in SolarEdge server monitoring API requests and responses.
 /// Specifies the aggregation granularity of the data.
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TimeUnit {
     /// 15 minutes

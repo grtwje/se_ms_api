@@ -1,7 +1,7 @@
 //! Module for querying the site power measurements in 15 minute resolution.
 
 use crate::{DateValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_TIME_FORMAT};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// site_power request
 #[derive(Clone, Debug, PartialEq)]
@@ -11,7 +11,7 @@ pub struct Req {
 }
 
 /// site_power response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Resp {
     /// Power measurements.
@@ -19,7 +19,7 @@ pub struct Resp {
 }
 
 /// Power measurements.
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Power {
     /// Time unit of the Power measurements

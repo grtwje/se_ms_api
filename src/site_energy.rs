@@ -1,7 +1,7 @@
 //! Module for querying the site energy measurements.
 
 use crate::{DateValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_FORMAT};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// site_energy request
 #[derive(Clone, Debug, PartialEq)]
@@ -12,7 +12,7 @@ pub struct Req {
 }
 
 /// site_energy response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Resp {
     /// Energy measurements.
@@ -20,7 +20,7 @@ pub struct Resp {
 }
 
 /// Energy measurements.
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Energy {
     /// Granularity of the energy measurements (should match the request)

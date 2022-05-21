@@ -7,7 +7,7 @@ mod common;
 
 use se_ms_api::{
     CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SiteEnergyReq, SitePowerDetailedReq, SitePowerReq,
+    SiteEnergyDetailedReq, SiteEnergyReq, SiteListReq, SitePowerDetailedReq, SitePowerReq,
     SiteTimeFrameEnergyReq, SupportedVersionsReq, TimeUnit,
 };
 
@@ -275,5 +275,25 @@ fn site_power_integration_test() {
             }
         }
         Err(e) => panic!("Unexpected SitePower response: {:?}", e),
+    }
+}
+
+#[test]
+fn site_list_integration_test() {
+    let req = SiteListReq::new(None, None, None, None, None, None);
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.sites.count, 1);
+            assert_eq!(r.sites.site.e.len(), 1);
+            assert_eq!(r.sites.site.e[0].status, "Active");
+            assert_eq!(r.sites.site.e[0].location.country_code, "US");
+            assert!(r.sites.site.e[0].uris.contains_key("SITE_IMAGE"));
+            assert!(!r.sites.site.e[0].public_settings.is_public);
+        }
+        Err(e) => {
+            panic!("Unexpected SiteList response: {:?}", e);
+        }
     }
 }

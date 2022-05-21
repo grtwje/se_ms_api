@@ -1,14 +1,14 @@
 //! Module for querying the energy production start and end dates of the site.
 
 use crate::{SendReq, MONITORING_API_URL};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// site_data_period request
 #[derive(Clone, Debug, PartialEq)]
 pub struct Req;
 
 /// site_data_period response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Resp {
     /// Period of time site has been producing.
@@ -16,7 +16,7 @@ pub struct Resp {
 }
 
 /// Period of time site has been producing.
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SiteDataPeriod {
     /// Start date of energy production.

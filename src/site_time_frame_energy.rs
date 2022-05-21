@@ -1,10 +1,7 @@
 //! Module for querying the site total energy produced for a given period.
 
-pub use crate::date_value::DateValue;
-
-use crate::URL_DATE_FORMAT;
-use crate::{SendReq, MONITORING_API_URL};
-use serde::{Deserialize, Serialize};
+use crate::{SendReq, MONITORING_API_URL, URL_DATE_FORMAT};
+use serde::Deserialize;
 
 /// site_time_frame_energy request
 #[derive(Clone, Debug, PartialEq)]
@@ -14,7 +11,7 @@ pub struct Req {
 }
 
 /// site_time_frame_energy response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Resp {
     /// Energy measurements.
@@ -22,7 +19,7 @@ pub struct Resp {
 }
 
 /// Energy measurements.
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct TimeFrameEnergy {
     /// Energy produced during the time period

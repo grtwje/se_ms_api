@@ -1,21 +1,21 @@
 //! Module for querying the current API version of the SolarEdge monitoring server.
 
 use crate::{SendReq, MONITORING_API_URL};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Current version request
 #[derive(Clone, Debug, PartialEq)]
 pub struct Req;
 
 /// Current version response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 pub struct Resp {
     /// The API version running on the server
     pub version: Version,
 }
 
 /// The release version of the server
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 pub struct Version {
     /// The release number running on the server in <major.minor.revision> format.
     pub release: String,

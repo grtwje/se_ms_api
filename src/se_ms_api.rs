@@ -41,13 +41,13 @@
 //! * [SiteDetailsReq] / [SiteDetailsResp]
 //! * [SiteEnergyReq] / [SiteEnergyResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
+//! * [SiteListReq] / [SiteListResp]
 //! * [SitePowerReq] / [SitePowerResp]
 //! * [SitePowerDetailedReq] / [SitePowerDetailedResp]
 //! * [SiteTimeFrameEnergyReq] / [SiteTimeFrameEnergyResp]
 //! * [SupportedVersionsReq] / [SupportedVersionsResp]
 //!
 //! TODO:
-//! SitesList,
 //! SiteOverview,
 //! SitePowerFlow,
 //! SiteStorageInformation,
@@ -68,12 +68,14 @@
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
 #![warn(clippy::all, clippy::pedantic)]
+#![allow(clippy::doc_markdown)]
 
 pub use current_version::{Req as CurrentVersionReq, Resp as CurrentVersionResp};
 pub use site_data_period::{Req as SiteDataPeriodReq, Resp as SiteDataPeriodResp};
 pub use site_details::{Req as SiteDetailsReq, Resp as SiteDetailsResp};
 pub use site_energy::{Req as SiteEnergyReq, Resp as SiteEnergyResp};
 pub use site_energy_detailed::{Req as SiteEnergyDetailedReq, Resp as SiteEnergyDetailedResp};
+pub use site_list::{Req as SiteListReq, Resp as SiteListResp};
 pub use site_power::{Req as SitePowerReq, Resp as SitePowerResp};
 pub use site_power_detailed::{Req as SitePowerDetailedReq, Resp as SitePowerDetailedResp};
 pub use site_time_frame_energy::{Req as SiteTimeFrameEnergyReq, Resp as SiteTimeFrameEnergyResp};
@@ -84,6 +86,10 @@ pub use error::{Error, Kind};
 pub use meter_type::MeterType;
 pub use meter_value::MeterValue;
 use serde::Deserialize;
+pub use site_details::SiteDetails;
+pub use site_location::SiteLocation;
+pub use site_module::SiteModule;
+pub use site_public_settings::SitePublicSettings;
 pub use time_unit::TimeUnit;
 
 mod current_version;
@@ -95,6 +101,7 @@ mod site_data_period;
 mod site_details;
 mod site_energy;
 mod site_energy_detailed;
+mod site_list;
 mod site_location;
 mod site_module;
 mod site_power;
@@ -120,7 +127,6 @@ const URL_DATE_FORMAT: &str = "%Y-%m-%d";
 /// Used as the parameter for the send() function of all of the possible requests.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct SolaredgeCredentials {
-    bulk_list: Option<String>,
     site_id: String,
     api_key: String,
 }
@@ -137,25 +143,10 @@ impl SolaredgeCredentials {
     /// A credentials struct to be used in subsequent request sends.
     #[must_use]
     pub fn new(site_id: &str, api_key: &str) -> Self {
-        let bulk_list = None;
         let site_id = site_id.to_string();
         let api_key = format!("api_key={}", api_key);
 
-        SolaredgeCredentials {
-            bulk_list,
-            site_id,
-            api_key,
-        }
-    }
-
-    /// Populate the bulk site list used by the bulk option that some requests support.
-    ///
-    /// # Arguments
-    ///
-    /// * `bulk_list` - list of site IDs to query. 1 to 100 site IDs allowed.
-    pub fn set_bulk_list(&mut self, bulk_list: Vec<&str>) {
-        assert!((bulk_list.len() >= 1) && (bulk_list.len() <= 100));
-        self.bulk_list = Some(bulk_list.join(","));
+        SolaredgeCredentials { site_id, api_key }
     }
 
     /// See the site ID being used in the credentials.
@@ -171,34 +162,6 @@ impl SolaredgeCredentials {
 pub trait SendReq<Resp> {
     #[doc(hidden)]
     fn build_url(&self, site_id: &str, api_key: &str) -> String;
-
-    #[doc(hidden)]
-    fn send_helper(&self, url: &str) -> Result<Resp, Error>
-    where
-        for<'de> Resp: Deserialize<'de>,
-    {
-        let res = REQWEST_CLIENT.get(url).send()?;
-
-        if res.status().is_success() {
-            let parsed = res.json::<Resp>()?;
-
-            Ok(parsed)
-        } else {
-            let reason: String;
-            match res.status().canonical_reason() {
-                Some(r) => reason = r.to_string(),
-                None => reason = res.status().as_str().to_string(),
-            };
-
-            let text: String;
-            match res.text() {
-                Ok(t) => text = t,
-                Err(_) => text = "".to_string(),
-            };
-
-            Err(Error::new(Kind::HttpErrorStatus(reason, text)))
-        }
-    }
 
     /// Send the request to Solaredge and return the response.
     ///
@@ -217,7 +180,25 @@ pub trait SendReq<Resp> {
     {
         let url = self.build_url(&solaredge.site_id, &solaredge.api_key);
 
-        self.send_helper(&url)
+        let res = REQWEST_CLIENT.get(url).send()?;
+
+        if res.status().is_success() {
+            let parsed = res.json::<Resp>()?;
+
+            Ok(parsed)
+        } else {
+            let reason = match res.status().canonical_reason() {
+                Some(r) => r.to_string(),
+                None => res.status().as_str().to_string(),
+            };
+
+            let text = match res.text() {
+                Ok(t) => t,
+                Err(_) => "".to_string(),
+            };
+
+            Err(Error::new(Kind::HttpErrorStatus(reason, text)))
+        }
     }
 }
 
@@ -230,17 +211,10 @@ mod tests {
 
     #[test]
     fn solaredge_credentials_unit_test() {
-        let mut se = SolaredgeCredentials::new("id", "key");
+        let se = SolaredgeCredentials::new("id", "key");
         assert_eq!(se.site_id, "id");
         assert_eq!(se.site_id(), "id");
         assert_eq!(se.api_key, "api_key=key");
-        assert_eq!(se.bulk_list, None);
-
-        se.set_bulk_list(vec!["1"]);
-        assert_eq!(se.bulk_list, Some("1".to_string()));
-
-        se.set_bulk_list(vec!["2", "4"]);
-        assert_eq!(se.bulk_list, Some("2,4".to_string()));
     }
 
     #[test]
