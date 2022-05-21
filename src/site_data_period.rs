@@ -1,6 +1,6 @@
 //! Module for querying the energy production start and end dates of the site.
 
-use crate::{SendReq, SendReqBulk, MONITORING_API_URL};
+use crate::{SendReq, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
 /// site_data_period request
@@ -41,8 +41,6 @@ impl SendReq<Resp> for Req {
         )
     }
 }
-
-impl SendReqBulk<Resp> for Req {}
 
 impl Default for Req {
     fn default() -> Self {

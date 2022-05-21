@@ -1,6 +1,6 @@
 //! Module for querying the site energy measurements.
 
-use crate::{DateValue, SendReq, SendReqBulk, TimeUnit, MONITORING_API_URL, URL_DATE_FORMAT};
+use crate::{DateValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_FORMAT};
 use serde::{Deserialize, Serialize};
 
 /// site_energy request
@@ -72,8 +72,6 @@ impl SendReq<Resp> for Req {
         )
     }
 }
-
-impl SendReqBulk<Resp> for Req {}
 
 #[cfg(test)]
 mod tests {

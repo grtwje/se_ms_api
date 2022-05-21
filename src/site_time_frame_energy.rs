@@ -3,7 +3,7 @@
 pub use crate::date_value::DateValue;
 
 use crate::URL_DATE_FORMAT;
-use crate::{SendReq, SendReqBulk, MONITORING_API_URL};
+use crate::{SendReq, MONITORING_API_URL};
 use serde::{Deserialize, Serialize};
 
 /// site_time_frame_energy request
@@ -55,8 +55,6 @@ impl SendReq<Resp> for Req {
         )
     }
 }
-
-impl SendReqBulk<Resp> for Req {}
 
 #[cfg(test)]
 mod tests {

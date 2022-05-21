@@ -1,6 +1,6 @@
 //! Module for querying the site power measurements in 15 minute resolution.
 
-use crate::{DateValue, SendReq, SendReqBulk, TimeUnit, MONITORING_API_URL, URL_DATE_TIME_FORMAT};
+use crate::{DateValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_TIME_FORMAT};
 use serde::{Deserialize, Serialize};
 
 /// site_power request
@@ -60,8 +60,6 @@ impl SendReq<Resp> for Req {
         )
     }
 }
-
-impl SendReqBulk<Resp> for Req {}
 
 #[cfg(test)]
 mod tests {

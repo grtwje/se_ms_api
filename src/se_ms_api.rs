@@ -48,7 +48,7 @@
 //!
 //! TODO:
 //! SitesList,
-//! SiteOverview & bulk,
+//! SiteOverview,
 //! SitePowerFlow,
 //! SiteStorageInformation,
 //! SiteImage,
@@ -68,31 +68,22 @@
 #![warn(missing_docs)]
 #![warn(missing_debug_implementations)]
 #![warn(clippy::all, clippy::pedantic)]
-#![allow(clippy::doc_markdown)]
 
-pub use current_version::Req as CurrentVersionReq;
-pub use current_version::Resp as CurrentVersionResp;
+pub use current_version::{Req as CurrentVersionReq, Resp as CurrentVersionResp};
+pub use site_data_period::{Req as SiteDataPeriodReq, Resp as SiteDataPeriodResp};
+pub use site_details::{Req as SiteDetailsReq, Resp as SiteDetailsResp};
+pub use site_energy::{Req as SiteEnergyReq, Resp as SiteEnergyResp};
+pub use site_energy_detailed::{Req as SiteEnergyDetailedReq, Resp as SiteEnergyDetailedResp};
+pub use site_power::{Req as SitePowerReq, Resp as SitePowerResp};
+pub use site_power_detailed::{Req as SitePowerDetailedReq, Resp as SitePowerDetailedResp};
+pub use site_time_frame_energy::{Req as SiteTimeFrameEnergyReq, Resp as SiteTimeFrameEnergyResp};
+pub use supported_versions::{Req as SupportedVersionsReq, Resp as SupportedVersionsResp};
+
 pub use date_value::DateValue;
 pub use error::{Error, Kind};
 pub use meter_type::MeterType;
 pub use meter_value::MeterValue;
 use serde::Deserialize;
-pub use site_data_period::Req as SiteDataPeriodReq;
-pub use site_data_period::Resp as SiteDataPeriodResp;
-pub use site_details::Req as SiteDetailsReq;
-pub use site_details::Resp as SiteDetailsResp;
-pub use site_energy::Req as SiteEnergyReq;
-pub use site_energy::Resp as SiteEnergyResp;
-pub use site_energy_detailed::Req as SiteEnergyDetailedReq;
-pub use site_energy_detailed::Resp as SiteEnergyDetailedResp;
-pub use site_power::Req as SitePowerReq;
-pub use site_power::Resp as SitePowerResp;
-pub use site_power_detailed::Req as SitePowerDetailedReq;
-pub use site_power_detailed::Resp as SitePowerDetailedResp;
-pub use site_time_frame_energy::Req as SiteTimeFrameEnergyReq;
-pub use site_time_frame_energy::Resp as SiteTimeFrameEnergyResp;
-pub use supported_versions::Req as SupportedVersionsReq;
-pub use supported_versions::Resp as SupportedVersionsResp;
 pub use time_unit::TimeUnit;
 
 mod current_version;
@@ -227,38 +218,6 @@ pub trait SendReq<Resp> {
         let url = self.build_url(&solaredge.site_id, &solaredge.api_key);
 
         self.send_helper(&url)
-    }
-}
-
-/// Some Solaredge requests implement this for sending bulk requests
-/// (i.e. multiple sites in one request).
-///
-/// Use SolaredgeCredentials.set_bulk_list() to specify the site list to use.
-pub trait SendReqBulk<Resp>: SendReq<Resp> {
-    /// Send the bulk request to Solaredge and return the response.
-    ///
-    /// # Arguments
-    ///
-    /// * `solaredge` - SolarEdge credentials to use for sending
-    ///
-    /// # Returns
-    /// The SolarEdge response or an error string.
-    ///
-    /// # Errors
-    /// Errors can occur on the request send or when parsing the response.
-    /// Also it is an error if the bulk list is empty.
-    fn send_bulk(&self, solaredge: &SolaredgeCredentials) -> Result<Resp, Error>
-    where
-        for<'de> Resp: Deserialize<'de>,
-    {
-        match &solaredge.bulk_list {
-            Some(b) => {
-                let url = self.build_url(&b, &solaredge.api_key);
-
-                self.send_helper(&url)
-            }
-            None => Err(Error::new(Kind::BulkListNone)),
-        }
     }
 }
 

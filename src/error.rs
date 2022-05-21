@@ -29,9 +29,6 @@ pub enum Kind {
     /// An error returned from the reqwest crate.
     ReqwestError(reqwest::Error),
 
-    /// Attempted bulk operation, but bulk list is empty.
-    BulkListNone,
-
     /// HTTP error from sending a request.
     HttpErrorStatus(String, String),
 }
@@ -40,7 +37,6 @@ impl error::Error for Error {
     fn description(&self) -> &str {
         match self.kind {
             Kind::ReqwestError(_) => "Reqwest error",
-            Kind::BulkListNone => "Tried to use empty bulk list.",
             Kind::HttpErrorStatus(_, _) => "HTTP error",
         }
     }
@@ -50,7 +46,6 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self.kind {
             Kind::ReqwestError(s) => write!(f, "Reqwest Error: HTTP status-code{}", s),
-            Kind::BulkListNone => write!(f, "Empty bulk list error"),
             Kind::HttpErrorStatus(s, t) => write!(f, "HTTP error: {}: {}", s, t),
         }
     }

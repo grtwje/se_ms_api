@@ -6,7 +6,7 @@ extern crate lazy_static;
 mod common;
 
 use se_ms_api::{
-    CurrentVersionReq, Kind, MeterType, SendReq, SendReqBulk, SiteDataPeriodReq, SiteDetailsReq,
+    CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
     SiteEnergyDetailedReq, SiteEnergyReq, SitePowerDetailedReq, SitePowerReq,
     SiteTimeFrameEnergyReq, SupportedVersionsReq, TimeUnit,
 };
@@ -172,17 +172,6 @@ fn site_data_period_integration_test() {
             panic!("Unexpected SiteDataPeriod response: {:?}", e);
         }
     }
-
-    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
-    match resp {
-        Ok(r) => {
-            panic!("SiteDataPeriod unexpected success: {:?}", r)
-        }
-        Err(e) => match e.kind() {
-            Kind::BulkListNone => assert!(true),
-            u => panic!("Unexpected SiteDataPeriod error: {:?}", u),
-        },
-    }
 }
 
 #[test]
@@ -221,17 +210,6 @@ fn site_energy_integration_test() {
         }
         Err(e) => panic!("Unexpected SiteEnergy response: {:?}", e),
     }
-
-    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
-    match resp {
-        Ok(r) => {
-            panic!("SiteEnergy unexpected success: {:?}", r)
-        }
-        Err(e) => match e.kind() {
-            Kind::BulkListNone => assert!(true),
-            u => panic!("Unexpected SiteEnergy error: {:?}", u),
-        },
-    }
 }
 
 #[test]
@@ -255,17 +233,6 @@ fn site_time_frame_energy_integration_test() {
             assert_eq!(r.time_frame_energy.energy, 12896.0);
         }
         Err(e) => panic!("Unexpected SiteTimeFrameEnergy response: {:?}", e),
-    }
-
-    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
-    match resp {
-        Ok(r) => {
-            panic!("SiteTimeFrameEnergy unexpected success: {:?}", r)
-        }
-        Err(e) => match e.kind() {
-            Kind::BulkListNone => assert!(true),
-            u => panic!("Unexpected SiteTimeFrameEnergy error: {:?}", u),
-        },
     }
 }
 
@@ -308,16 +275,5 @@ fn site_power_integration_test() {
             }
         }
         Err(e) => panic!("Unexpected SitePower response: {:?}", e),
-    }
-
-    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
-    match resp {
-        Ok(r) => {
-            panic!("SitePower unexpected success: {:?}", r)
-        }
-        Err(e) => match e.kind() {
-            Kind::BulkListNone => assert!(true),
-            u => panic!("Unexpected SitePower error: {:?}", u),
-        },
     }
 }
