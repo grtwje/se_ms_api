@@ -1,10 +1,6 @@
 //! Module for querying the site energy measurements.
 
-pub use crate::date_value::DateValue;
-
-use crate::time_unit::TimeUnit;
-use crate::URL_DATE_FORMAT;
-use crate::{SendReq, SendReqBulk, MONITORING_API_URL};
+use crate::{DateValue, SendReq, SendReqBulk, TimeUnit, MONITORING_API_URL, URL_DATE_FORMAT};
 use serde::{Deserialize, Serialize};
 
 /// site_energy request
@@ -28,7 +24,7 @@ pub struct Resp {
 #[serde(rename_all = "camelCase")]
 pub struct Energy {
     /// Granularity of the energy measurements (should match the request)
-    pub time_unit: String,
+    pub time_unit: TimeUnit,
 
     /// Measurement unit (e.g. Wh)
     pub unit: String,
@@ -39,6 +35,12 @@ pub struct Energy {
 
 impl Req {
     /// Create a site_energy request message that can be sent to SolarEdge.
+    ///
+    /// # Arguments
+    ///
+    /// * `start_date` - beginning date for the energy details
+    /// * `end_date`   - end date for the energy details
+    /// * `time_unit`  - size of time unit to collect over the date period
     #[must_use]
     pub fn new(
         start_date: chrono::NaiveDate,

@@ -1,10 +1,6 @@
 //! Module for detailed site energy measurements from meters such as consumption, export (feed-in), import (purchase), etc.
 
-use crate::meter_type::MeterType;
-use crate::meter_value::MeterValue;
-use crate::time_unit::TimeUnit;
-use crate::URL_DATE_TIME_FORMAT;
-use crate::{SendReq, MONITORING_API_URL};
+use crate::{MeterType, MeterValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_TIME_FORMAT};
 use serde::{Deserialize, Serialize};
 
 /// site_energyDetails request

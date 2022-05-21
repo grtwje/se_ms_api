@@ -1,9 +1,6 @@
 //! Module for detailed site power measurements from meters such as consumption, export (feed-in), import (purchase), etc.
 
-use crate::meter_type::MeterType;
-use crate::meter_value::MeterValue;
-use crate::URL_DATE_TIME_FORMAT;
-use crate::{SendReq, MONITORING_API_URL};
+use crate::{MeterType, MeterValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_TIME_FORMAT};
 use serde::{Deserialize, Serialize};
 
 /// site_powerDetails request
@@ -27,7 +24,7 @@ pub struct Resp {
 #[serde(rename_all = "camelCase")]
 pub struct PowerDetails {
     /// Granularity of the power detail values (should match the request)
-    pub time_unit: String,
+    pub time_unit: TimeUnit,
 
     /// Measurement unit (e.g. Wh)
     pub unit: String,

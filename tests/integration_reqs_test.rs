@@ -7,8 +7,8 @@ mod common;
 
 use se_ms_api::{
     CurrentVersionReq, Kind, MeterType, SendReq, SendReqBulk, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SiteEnergyReq, SitePowerDetailedReq, SiteTimeFrameEnergyReq,
-    SupportedVersionsReq,
+    SiteEnergyDetailedReq, SiteEnergyReq, SitePowerDetailedReq, SitePowerReq,
+    SiteTimeFrameEnergyReq, SupportedVersionsReq, TimeUnit,
 };
 
 #[test]
@@ -128,7 +128,7 @@ fn site_power_detailed_integration_test() {
 
     match resp {
         Ok(r) => {
-            assert_eq!(r.power_details.time_unit, "QUARTER_OF_AN_HOUR");
+            assert_eq!(r.power_details.time_unit, TimeUnit::QuarterOfAnHour);
             assert_eq!(r.power_details.unit, "W");
             assert_eq!(r.power_details.meters.len(), 1);
             assert_eq!(r.power_details.meters[0].meter_type, MeterType::Purchased);
@@ -202,7 +202,7 @@ fn site_energy_integration_test() {
 
     match resp {
         Ok(r) => {
-            assert_eq!(r.energy.time_unit, "DAY");
+            assert_eq!(r.energy.time_unit, TimeUnit::Day);
             assert_eq!(r.energy.unit, "Wh");
             assert_eq!(r.energy.values.len(), 2);
             assert_eq!(r.energy.values[0].date, "2022-01-01 00:00:00");
@@ -265,6 +265,59 @@ fn site_time_frame_energy_integration_test() {
         Err(e) => match e.kind() {
             Kind::BulkListNone => assert!(true),
             u => panic!("Unexpected SiteTimeFrameEnergy error: {:?}", u),
+        },
+    }
+}
+
+#[test]
+fn site_power_integration_test() {
+    let start_date =
+        match NaiveDateTime::parse_from_str("2022-01-01 12:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing start date: {}", error),
+        };
+
+    let end_date =
+        match NaiveDateTime::parse_from_str("2022-01-01 13:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing end date: {}", error),
+        };
+
+    let req = SitePowerReq::new(start_date, end_date);
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.power.time_unit, TimeUnit::QuarterOfAnHour);
+            assert_eq!(r.power.unit, "W");
+            assert_eq!(r.power.values.len(), 4);
+            assert_eq!(r.power.values[0].date, "2022-01-01 12:00:00");
+            assert_eq!(r.power.values[1].date, "2022-01-01 12:15:00");
+            assert_eq!(r.power.values[2].date, "2022-01-01 12:30:00");
+            assert_eq!(r.power.values[3].date, "2022-01-01 12:45:00");
+
+            if let Some(v) = r.power.values[0].value {
+                assert_eq!(v, 2013.872);
+            } else {
+                panic!("Missing value.");
+            }
+            if let Some(v) = r.power.values[3].value {
+                assert_eq!(v, 1670.7087);
+            } else {
+                panic!("Missing value.");
+            }
+        }
+        Err(e) => panic!("Unexpected SitePower response: {:?}", e),
+    }
+
+    let resp = req.send_bulk(&common::TEST_CREDENTIALS);
+    match resp {
+        Ok(r) => {
+            panic!("SitePower unexpected success: {:?}", r)
+        }
+        Err(e) => match e.kind() {
+            Kind::BulkListNone => assert!(true),
+            u => panic!("Unexpected SitePower error: {:?}", u),
         },
     }
 }
