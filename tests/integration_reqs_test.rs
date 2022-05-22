@@ -7,8 +7,8 @@ mod common;
 
 use se_ms_api::{
     CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SiteEnergyReq, SiteListReq, SitePowerDetailedReq, SitePowerReq,
-    SiteTimeFrameEnergyReq, SupportedVersionsReq, TimeUnit,
+    SiteEnergyDetailedReq, SiteEnergyReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq,
+    SitePowerFlowReq, SitePowerReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, TimeUnit,
 };
 
 #[test]
@@ -294,6 +294,65 @@ fn site_list_integration_test() {
         }
         Err(e) => {
             panic!("Unexpected SiteList response: {:?}", e);
+        }
+    }
+}
+
+#[test]
+fn site_overview_integration_test() {
+    let req = SiteOverviewReq::new();
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert!(!r.overview.last_update_time.is_empty());
+
+            assert!(r.overview.life_time_data.energy > 0.0);
+            if let Some(revenue) = r.overview.life_time_data.revenue {
+                assert!(revenue > 0.0);
+            } else {
+                panic!("Missing value.");
+            }
+
+            assert!(r.overview.last_year_data.energy > 0.0);
+            if r.overview.last_year_data.revenue.is_some() {
+                panic!("Unexpected value.");
+            }
+
+            assert!(r.overview.last_month_data.energy > 0.0);
+            if r.overview.last_month_data.revenue.is_some() {
+                panic!("Unexpected value.");
+            }
+
+            assert!(r.overview.last_day_data.energy > 0.0);
+            if r.overview.last_day_data.revenue.is_some() {
+                panic!("Unexpected value.");
+            }
+
+            assert!(r.overview.current_power.power > 0.0);
+            assert_eq!(r.overview.measured_by, "INVERTER".to_string());
+        }
+        Err(e) => {
+            panic!("Unexpected SiteOverview response: {:?}", e);
+        }
+    }
+}
+
+#[test]
+fn site_power_flow_integration_test() {
+    let req = SitePowerFlowReq::new();
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.site_current_power_flow.update_refresh_rate, 3);
+            assert_eq!(r.site_current_power_flow.unit, "kW");
+            assert!(!r.site_current_power_flow.connections.is_empty());
+            assert!(r.site_current_power_flow.pv.is_some());
+            assert!(r.site_current_power_flow.storage.is_none());
+        }
+        Err(e) => {
+            panic!("Unexpected SitePowerFlow response: {:?}", e);
         }
     }
 }
