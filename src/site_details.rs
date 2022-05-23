@@ -1,10 +1,7 @@
 //! Module for site details requests and responses exchanged with the SolarEdge server monitoring API.
 
-use crate::site_location::SiteLocation;
-use crate::site_module::SiteModule;
-use crate::site_public_settings::SitePublicSettings;
-use crate::{SendReq, SolaredgeCredentials, MONITORING_API_URL};
-use serde::{Deserialize, Serialize};
+use crate::{SendReq, SiteLocation, SiteModule, SitePublicSettings, MONITORING_API_URL};
+use serde::Deserialize;
 use std::collections::HashMap;
 
 /// site_details request
@@ -12,14 +9,14 @@ use std::collections::HashMap;
 pub struct Req;
 
 /// site_details response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 pub struct Resp {
     /// Detailed information about the monitoring site
     pub details: SiteDetails,
 }
 
 /// Detailed information for a single site.
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SiteDetails {
     /// ID of the site. Should match the site_id specified in the Solaredge request.
@@ -84,10 +81,10 @@ impl Req {
 }
 
 impl SendReq<Resp> for Req {
-    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
+    fn build_url(&self, site_id: &str, api_key: &str) -> String {
         format!(
             "{}site/{}/details?{}",
-            *MONITORING_API_URL, solaredge.site_id, solaredge.api_key,
+            *MONITORING_API_URL, site_id, api_key,
         )
     }
 }

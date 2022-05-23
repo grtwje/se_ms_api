@@ -1,9 +1,9 @@
 //! Module for holding site location data returned in the SolarEdge server monitoring API responses.
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Location of the SolarEdge inverter.
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SiteLocation {
     /// Country of the SolarEdge inverter.

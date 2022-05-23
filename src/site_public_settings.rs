@@ -1,9 +1,9 @@
 //! Module for reporting information about the web pages for the site served by SolarEdge.
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Information about the public web page for the site provided by SolarEdge.
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SitePublicSettings {
     /// Optional name given to the web page fro the site.

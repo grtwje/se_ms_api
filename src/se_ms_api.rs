@@ -37,36 +37,31 @@
 //!
 //! Supported API requests/responses include:
 //! * [CurrentVersionReq] / [CurrentVersionResp]
+//! * [SiteDataPeriodReq] / [SiteDataPeriodResp]
 //! * [SiteDetailsReq] / [SiteDetailsResp]
+//! * [SiteEnergyReq] / [SiteEnergyResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
+//! * [SiteEnvironmentalBenefitsReq] / [SiteEnvironmentalBenefitsResp]
+//! * [SiteListReq] / [SiteListResp]
+//! * [SiteOverviewReq] / [SiteOverviewResp]
+//! * [SitePowerReq] / [SitePowerResp]
 //! * [SitePowerDetailedReq] / [SitePowerDetailedResp]
+//! * [SitePowerFlowReq] / [SitePowerFlowResp]
+//! * [SiteStorageDataReq] / [SiteStorageDataResp]
+//! * [SiteTimeFrameEnergyReq] / [SiteTimeFrameEnergyResp]
 //! * [SupportedVersionsReq] / [SupportedVersionsResp]
 //!
 //! TODO:
-//! SitesList,
-//! SiteDataPeriod start/end dates,
-//! SiteDataPeriod bulk,
-//! SiteEnergy,
-//! SiteEnergy bulk,
-//! SiteTimeFrameEnergy,
-//! SiteTimeFrameEnergy bulk,
-//! SitePower,
-//! SitePower bulk,
-//! SiteOverview,
-//! SiteOverview bulk,
-//! SitePowerFlow,
-//! SiteStorageInformation,
-//! SiteImage,
-//! SiteEnvironmentalBenefits,
-//! SiteInstallerImage,
-//! SiteEquipmentList,
-//! SiteInventory,
-//! SiteInverterTechnicalData,
-//! SiteEquipmentChangeLog,
-//! AccountsList,
-//! SiteMetersData,
-//! SiteSensorList,
-//! SiteSensorData
+//! * SiteImage,
+//! * SiteInstallerImage,
+//! * SiteEquipmentList,
+//! * SiteInventory,
+//! * SiteInverterTechnicalData,
+//! * SiteEquipmentChangeLog,
+//! * AccountsList,
+//! * SiteMetersData,
+//! * SiteSensorList,
+//! * SiteSensorData
 
 #![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
@@ -75,32 +70,57 @@
 #![warn(clippy::all, clippy::pedantic)]
 #![allow(clippy::doc_markdown)]
 
-pub use current_version::Req as CurrentVersionReq;
-pub use current_version::Resp as CurrentVersionResp;
+pub use current_version::{Req as CurrentVersionReq, Resp as CurrentVersionResp};
+pub use site_data_period::{Req as SiteDataPeriodReq, Resp as SiteDataPeriodResp};
+pub use site_details::{Req as SiteDetailsReq, Resp as SiteDetailsResp};
+pub use site_energy::{Req as SiteEnergyReq, Resp as SiteEnergyResp};
+pub use site_energy_detailed::{Req as SiteEnergyDetailedReq, Resp as SiteEnergyDetailedResp};
+pub use site_environmental_benefits::{
+    Req as SiteEnvironmentalBenefitsReq, Resp as SiteEnvironmentalBenefitsResp,
+};
+pub use site_list::{Req as SiteListReq, Resp as SiteListResp};
+pub use site_overview::{Req as SiteOverviewReq, Resp as SiteOverviewResp};
+pub use site_power::{Req as SitePowerReq, Resp as SitePowerResp};
+pub use site_power_detailed::{Req as SitePowerDetailedReq, Resp as SitePowerDetailedResp};
+pub use site_power_flow::{Req as SitePowerFlowReq, Resp as SitePowerFlowResp};
+pub use site_storage_data::{Req as SiteStorageDataReq, Resp as SiteStorageDataResp};
+pub use site_time_frame_energy::{Req as SiteTimeFrameEnergyReq, Resp as SiteTimeFrameEnergyResp};
+pub use supported_versions::{Req as SupportedVersionsReq, Resp as SupportedVersionsResp};
+
+pub use date_value::DateValue;
 pub use error::{Error, Kind};
 pub use meter_type::MeterType;
+pub use meter_value::MeterValue;
 use serde::Deserialize;
-pub use site_details::Req as SiteDetailsReq;
-pub use site_details::Resp as SiteDetailsResp;
-pub use site_energy_detailed::Req as SiteEnergyDetailedReq;
-pub use site_energy_detailed::Resp as SiteEnergyDetailedResp;
-pub use site_power_detailed::Req as SitePowerDetailedReq;
-pub use site_power_detailed::Resp as SitePowerDetailedResp;
-pub use supported_versions::Req as SupportedVersionsReq;
-pub use supported_versions::Resp as SupportedVersionsResp;
+pub use site_details::SiteDetails;
+pub use site_location::SiteLocation;
+pub use site_module::SiteModule;
+pub use site_public_settings::SitePublicSettings;
+pub use system_units::SystemUnits;
+pub use time_unit::TimeUnit;
 
 mod current_version;
 mod date_value;
 mod error;
 mod meter_type;
 mod meter_value;
+mod site_data_period;
 mod site_details;
+mod site_energy;
 mod site_energy_detailed;
+mod site_environmental_benefits;
+mod site_list;
 mod site_location;
 mod site_module;
+mod site_overview;
+mod site_power;
 mod site_power_detailed;
+mod site_power_flow;
 mod site_public_settings;
+mod site_storage_data;
+mod site_time_frame_energy;
 mod supported_versions;
+mod system_units;
 mod time_unit;
 
 #[macro_use]
@@ -111,7 +131,8 @@ lazy_static! {
     static ref MONITORING_API_URL: String = "https://monitoringapi.solaredge.com/".to_string();
 }
 
-const URL_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
+const URL_DATE_TIME_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
+const URL_DATE_FORMAT: &str = "%Y-%m-%d";
 
 /// Struct for accessing SolarEdge's monitoring server for a given site and api key.
 ///
@@ -124,6 +145,14 @@ pub struct SolaredgeCredentials {
 
 impl SolaredgeCredentials {
     /// Create a Solaredge destination for the requests from the given site id and api_key.
+    ///
+    /// # Arguments
+    ///
+    /// * `site_id` - ID used by SolarEdge to identify your site.
+    /// * `api_key` - API token used SolarEdge to authenticate user is allowed to access site data.
+    ///
+    /// # Returns
+    /// A credentials struct to be used in subsequent request sends.
     #[must_use]
     pub fn new(site_id: &str, api_key: &str) -> Self {
         let site_id = site_id.to_string();
@@ -133,6 +162,7 @@ impl SolaredgeCredentials {
     }
 
     /// See the site ID being used in the credentials.
+    /// Used by the integration test framework.
     #[must_use]
     pub fn site_id(&self) -> &str {
         &self.site_id
@@ -143,7 +173,7 @@ impl SolaredgeCredentials {
 /// and getting the response is the same for all requests.
 pub trait SendReq<Resp> {
     #[doc(hidden)]
-    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String;
+    fn build_url(&self, site_id: &str, api_key: &str) -> String;
 
     /// Send the request to Solaredge and return the response.
     ///
@@ -160,13 +190,27 @@ pub trait SendReq<Resp> {
     where
         for<'de> Resp: Deserialize<'de>,
     {
-        let url = self.build_url(solaredge);
+        let url = self.build_url(&solaredge.site_id, &solaredge.api_key);
 
-        let res = REQWEST_CLIENT.get(&url).send()?;
+        let res = REQWEST_CLIENT.get(url).send()?;
 
-        let parsed = res.json::<Resp>()?;
+        if res.status().is_success() {
+            let parsed = res.json::<Resp>()?;
 
-        Ok(parsed)
+            Ok(parsed)
+        } else {
+            let reason = match res.status().canonical_reason() {
+                Some(r) => r.to_string(),
+                None => res.status().as_str().to_string(),
+            };
+
+            let text = match res.text() {
+                Ok(t) => t,
+                Err(_) => "".to_string(),
+            };
+
+            Err(Error::new(Kind::HttpErrorStatus(reason, text)))
+        }
     }
 }
 

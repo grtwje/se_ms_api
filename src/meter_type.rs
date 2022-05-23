@@ -1,9 +1,9 @@
 //! Module for specifying the meter type in SolarEdge server monitoring API requests and responses.
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Meters supported by SolarEdge.
-#[derive(Clone, Serialize, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, PartialEq)]
 pub enum MeterType {
     /// Solar energy produced.
     Production,

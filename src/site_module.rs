@@ -1,9 +1,9 @@
 //! Module for reporting solar panel module information from the SolarEdge server monitoring API.
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
 /// Solar panel module information
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct SiteModule {
     /// solar panel manufacturer

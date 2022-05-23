@@ -1,10 +1,7 @@
 //! Module for detailed site power measurements from meters such as consumption, export (feed-in), import (purchase), etc.
 
-use crate::meter_type::MeterType;
-use crate::meter_value::MeterValue;
-use crate::URL_TIME_FORMAT;
-use crate::{SendReq, SolaredgeCredentials, MONITORING_API_URL};
-use serde::{Deserialize, Serialize};
+use crate::{MeterType, MeterValue, SendReq, TimeUnit, MONITORING_API_URL, URL_DATE_TIME_FORMAT};
+use serde::Deserialize;
 
 /// site_powerDetails request
 #[derive(Clone, Debug, PartialEq)]
@@ -15,7 +12,7 @@ pub struct Req {
 }
 
 /// site_powerDetails response
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Resp {
     /// Power details
@@ -23,11 +20,11 @@ pub struct Resp {
 }
 
 /// Power details
-#[derive(Clone, Serialize, Deserialize, Debug, Default, PartialEq)]
+#[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct PowerDetails {
     /// Granularity of the power detail values (should match the request)
-    pub time_unit: String,
+    pub time_unit: TimeUnit,
 
     /// Measurement unit (e.g. Wh)
     pub unit: String,
@@ -50,9 +47,9 @@ impl Req {
         end_time: chrono::NaiveDateTime,
         meters: Option<Vec<MeterType>>,
     ) -> Self {
-        let start_time = format!("startTime={}&", start_time.format(URL_TIME_FORMAT));
+        let start_time = format!("startTime={}&", start_time.format(URL_DATE_TIME_FORMAT));
 
-        let end_time = format!("endTime={}&", end_time.format(URL_TIME_FORMAT));
+        let end_time = format!("endTime={}&", end_time.format(URL_DATE_TIME_FORMAT));
 
         let meters = match meters {
             Some(m) => format!(
@@ -74,15 +71,10 @@ impl Req {
 }
 
 impl SendReq<Resp> for Req {
-    fn build_url(&self, solaredge: &SolaredgeCredentials) -> String {
+    fn build_url(&self, site_id: &str, api_key: &str) -> String {
         format!(
             "{}site/{}/powerDetails?{}{}{}{}",
-            *MONITORING_API_URL,
-            solaredge.site_id,
-            self.meters,
-            self.start_time,
-            self.end_time,
-            solaredge.api_key,
+            *MONITORING_API_URL, site_id, self.meters, self.start_time, self.end_time, api_key,
         )
     }
 }
