@@ -41,27 +41,27 @@
 //! * [SiteDetailsReq] / [SiteDetailsResp]
 //! * [SiteEnergyReq] / [SiteEnergyResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
+//! * [SiteEnvironmentalBenefitsReq] / [SiteEnvironmentalBenefitsResp]
 //! * [SiteListReq] / [SiteListResp]
 //! * [SiteOverviewReq] / [SiteOverviewResp]
 //! * [SitePowerReq] / [SitePowerResp]
 //! * [SitePowerDetailedReq] / [SitePowerDetailedResp]
 //! * [SitePowerFlowReq] / [SitePowerFlowResp]
+//! * [SiteStorageDataReq] / [SiteStorageDataResp]
 //! * [SiteTimeFrameEnergyReq] / [SiteTimeFrameEnergyResp]
 //! * [SupportedVersionsReq] / [SupportedVersionsResp]
 //!
 //! TODO:
-//! SiteStorageInformation,
-//! SiteImage,
-//! SiteEnvironmentalBenefits,
-//! SiteInstallerImage,
-//! SiteEquipmentList,
-//! SiteInventory,
-//! SiteInverterTechnicalData,
-//! SiteEquipmentChangeLog,
-//! AccountsList,
-//! SiteMetersData,
-//! SiteSensorList,
-//! SiteSensorData
+//! * SiteImage,
+//! * SiteInstallerImage,
+//! * SiteEquipmentList,
+//! * SiteInventory,
+//! * SiteInverterTechnicalData,
+//! * SiteEquipmentChangeLog,
+//! * AccountsList,
+//! * SiteMetersData,
+//! * SiteSensorList,
+//! * SiteSensorData
 
 #![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
@@ -75,11 +75,15 @@ pub use site_data_period::{Req as SiteDataPeriodReq, Resp as SiteDataPeriodResp}
 pub use site_details::{Req as SiteDetailsReq, Resp as SiteDetailsResp};
 pub use site_energy::{Req as SiteEnergyReq, Resp as SiteEnergyResp};
 pub use site_energy_detailed::{Req as SiteEnergyDetailedReq, Resp as SiteEnergyDetailedResp};
+pub use site_environmental_benefits::{
+    Req as SiteEnvironmentalBenefitsReq, Resp as SiteEnvironmentalBenefitsResp,
+};
 pub use site_list::{Req as SiteListReq, Resp as SiteListResp};
 pub use site_overview::{Req as SiteOverviewReq, Resp as SiteOverviewResp};
 pub use site_power::{Req as SitePowerReq, Resp as SitePowerResp};
 pub use site_power_detailed::{Req as SitePowerDetailedReq, Resp as SitePowerDetailedResp};
 pub use site_power_flow::{Req as SitePowerFlowReq, Resp as SitePowerFlowResp};
+pub use site_storage_data::{Req as SiteStorageDataReq, Resp as SiteStorageDataResp};
 pub use site_time_frame_energy::{Req as SiteTimeFrameEnergyReq, Resp as SiteTimeFrameEnergyResp};
 pub use supported_versions::{Req as SupportedVersionsReq, Resp as SupportedVersionsResp};
 
@@ -92,6 +96,7 @@ pub use site_details::SiteDetails;
 pub use site_location::SiteLocation;
 pub use site_module::SiteModule;
 pub use site_public_settings::SitePublicSettings;
+pub use system_units::SystemUnits;
 pub use time_unit::TimeUnit;
 
 mod current_version;
@@ -103,6 +108,7 @@ mod site_data_period;
 mod site_details;
 mod site_energy;
 mod site_energy_detailed;
+mod site_environmental_benefits;
 mod site_list;
 mod site_location;
 mod site_module;
@@ -111,8 +117,10 @@ mod site_power;
 mod site_power_detailed;
 mod site_power_flow;
 mod site_public_settings;
+mod site_storage_data;
 mod site_time_frame_energy;
 mod supported_versions;
+mod system_units;
 mod time_unit;
 
 #[macro_use]

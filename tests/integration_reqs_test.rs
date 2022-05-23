@@ -7,8 +7,9 @@ mod common;
 
 use se_ms_api::{
     CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SiteEnergyReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq,
-    SitePowerFlowReq, SitePowerReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, TimeUnit,
+    SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq, SiteListReq,
+    SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq, SitePowerReq, SiteStorageDataReq,
+    SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits, TimeUnit,
 };
 
 #[test]
@@ -355,4 +356,72 @@ fn site_power_flow_integration_test() {
             panic!("Unexpected SitePowerFlow response: {:?}", e);
         }
     }
+}
+
+#[test]
+fn site_storage_data_integration_test() {
+    let start_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing start date: {}", error),
+        };
+
+    let end_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-7 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing end date: {}", error),
+        };
+
+    let req = SiteStorageDataReq::new(start_ndt, end_ndt, None);
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.storage_data.battery_count, 0);
+            assert!(r.storage_data.batteries.e.is_empty());
+        }
+        Err(e) => {
+            panic!("Unexpected SiteStorageData response: {:?}", e);
+        }
+    };
+}
+
+#[test]
+fn site_environmental_benefits_integration_test() {
+    let req = SiteEnvironmentalBenefitsReq::new(Some(SystemUnits::Imperial));
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.env_benefits.gas_emission_saved.units, "lb");
+            assert!(r.env_benefits.gas_emission_saved.co2 > 79975.0);
+            assert!(r.env_benefits.gas_emission_saved.so2 > 57791.0);
+            assert!(r.env_benefits.gas_emission_saved.nox > 18429.0);
+            assert!(r.env_benefits.trees_planted > 604.0);
+            assert!(r.env_benefits.light_bulbs > 156510.0);
+        }
+        Err(e) => {
+            panic!("Unexpected SiteEnvironmentalBenefits response: {:?}", e);
+        }
+    };
+
+    let req = SiteEnvironmentalBenefitsReq::new(Some(SystemUnits::Metrics));
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.env_benefits.gas_emission_saved.units, "kg");
+            assert!(r.env_benefits.gas_emission_saved.co2 > 36276.0);
+            assert!(r.env_benefits.gas_emission_saved.so2 > 26213.0);
+            assert!(r.env_benefits.gas_emission_saved.nox > 8359.0);
+            assert!(r.env_benefits.trees_planted > 604.0);
+            assert!(r.env_benefits.light_bulbs > 156510.0);
+        }
+        Err(e) => {
+            panic!("Unexpected SiteEnvironmentalBenefits response: {:?}", e);
+        }
+    };
 }
