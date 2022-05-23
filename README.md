@@ -1,13 +1,14 @@
 # se_ms_api
  SolarEdge Monitoring Server API
 
-This library provides access to the SolarEdge Monitoring API.  The API is defined [here](https://www.solaredge.com/sites/default/files/se_monitoring_api.pdf),
-released January 2022.  I am in no way associated with SolarEdge.  And it follows that this software is not associated with SolarEdge.
+This library provides access to the SolarEdge Monitoring API. The API is defined [here](https://www.solaredge.com/sites/default/files/se_monitoring_api.pdf), released January 2022. I am in no way associated with SolarEdge. And it follows that this software is not associated with SolarEdge.
 
-You can use this library to get data collected by your SolarEdge inverter.  I use it to get the amount of self consumption for a billing period.
-I then use this data to track how close I am to breaking even on my solar investment.
+You can use this library to get data collected by your SolarEdge inverter. I use it to get the amount of self consumption for a billing period. I then use this data to track how close I am to breaking even on my solar investment.
 
-I've implemented the API as defined, except for the bulk requests. Since I only have one inverter, I cannot test bulk.
+I've implemented most of the API.
+* The bulk requests have not been implemented. Since I only have one inverter, I cannot test bulk.
+* The site storage data request is only partially tested since I don't have a battery (yet).
+* The site image and installer logo image requests are not implemented. I did not want to deal with handling the images. :)
 
 I did this as an exercise to learn Rust.  There are other similar libraries out there that are more sophisticated. 
 
