@@ -7,9 +7,9 @@ mod common;
 
 use se_ms_api::{
     CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq, SiteListReq,
-    SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq, SitePowerReq, SiteStorageDataReq,
-    SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits, TimeUnit,
+    SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq, SiteEquipmentListReq,
+    SiteListReq, SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq, SitePowerReq,
+    SiteStorageDataReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits, TimeUnit,
 };
 
 #[test]
@@ -422,6 +422,34 @@ fn site_environmental_benefits_integration_test() {
         }
         Err(e) => {
             panic!("Unexpected SiteEnvironmentalBenefits response: {:?}", e);
+        }
+    };
+}
+
+#[test]
+fn site_equipment_list_integration_test() {
+    let req = SiteEquipmentListReq::new();
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.reporters.list.eq.len(), r.reporters.count as usize);
+
+            assert_eq!(r.reporters.list.eq[0].name, "Gateway 1");
+            assert_eq!(r.reporters.list.eq[0].manufacturer, "");
+            assert_eq!(r.reporters.list.eq[0].model, "");
+            assert_eq!(r.reporters.list.eq[0].serial_number.len(), 11);
+            assert!(r.reporters.list.eq[0].kw_pdc.is_none());
+
+            assert_eq!(r.reporters.list.eq[1].name, "Inverter 1");
+            assert_eq!(r.reporters.list.eq[1].manufacturer, "SolarEdge");
+            assert!(r.reporters.list.eq[1].model.starts_with("SE7600H"));
+            assert_eq!(r.reporters.list.eq[1].serial_number.len(), 11);
+            assert!(r.reporters.list.eq[1].kw_pdc.is_none());
+        }
+        Err(e) => {
+            panic!("Unexpected SiteEquipmentList response: {:?}", e);
         }
     };
 }

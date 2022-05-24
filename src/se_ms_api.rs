@@ -42,6 +42,7 @@
 //! * [SiteEnergyReq] / [SiteEnergyResp]
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
 //! * [SiteEnvironmentalBenefitsReq] / [SiteEnvironmentalBenefitsResp]
+//! * [SiteEquipmentListReq] / [SiteEquipmentListResp]
 //! * [SiteListReq] / [SiteListResp]
 //! * [SiteOverviewReq] / [SiteOverviewResp]
 //! * [SitePowerReq] / [SitePowerResp]
@@ -54,7 +55,6 @@
 //! TODO:
 //! * SiteImage,
 //! * SiteInstallerImage,
-//! * SiteEquipmentList,
 //! * SiteInventory,
 //! * SiteInverterTechnicalData,
 //! * SiteEquipmentChangeLog,
@@ -78,6 +78,7 @@ pub use site_energy_detailed::{Req as SiteEnergyDetailedReq, Resp as SiteEnergyD
 pub use site_environmental_benefits::{
     Req as SiteEnvironmentalBenefitsReq, Resp as SiteEnvironmentalBenefitsResp,
 };
+pub use site_equipment_list::{Req as SiteEquipmentListReq, Resp as SiteEquipmentListResp};
 pub use site_list::{Req as SiteListReq, Resp as SiteListResp};
 pub use site_overview::{Req as SiteOverviewReq, Resp as SiteOverviewResp};
 pub use site_power::{Req as SitePowerReq, Resp as SitePowerResp};
@@ -109,6 +110,7 @@ mod site_details;
 mod site_energy;
 mod site_energy_detailed;
 mod site_environmental_benefits;
+mod site_equipment_list;
 mod site_list;
 mod site_location;
 mod site_module;
