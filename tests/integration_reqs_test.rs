@@ -8,8 +8,9 @@ mod common;
 use se_ms_api::{
     CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
     SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq, SiteEquipmentListReq,
-    SiteListReq, SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq, SitePowerReq,
-    SiteStorageDataReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits, TimeUnit,
+    SiteGetSensorListReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq,
+    SitePowerReq, SiteStorageDataReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits,
+    TimeUnit,
 };
 
 #[test]
@@ -450,6 +451,23 @@ fn site_equipment_list_integration_test() {
         }
         Err(e) => {
             panic!("Unexpected SiteEquipmentList response: {:?}", e);
+        }
+    };
+}
+
+#[test]
+fn site_get_sensor_list_integration_test() {
+    let req = SiteGetSensorListReq::new();
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.site_sensors.list.g.len(), r.site_sensors.total as usize);
+            assert_eq!(r.site_sensors.total, 0);
+        }
+        Err(e) => {
+            panic!("Unexpected SiteGetSensors response: {:?}", e);
         }
     };
 }
