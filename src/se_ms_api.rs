@@ -43,6 +43,7 @@
 //! * [SiteEnergyDetailedReq] / [SiteEnergyDetailedResp]
 //! * [SiteEnvironmentalBenefitsReq] / [SiteEnvironmentalBenefitsResp]
 //! * [SiteEquipmentListReq] / [SiteEquipmentListResp]
+//! * [SiteGetMetersDataReq] / [SiteGetMetersDataResp]
 //! * [SiteGetSensorListReq] / [SiteGetSensorListResp]
 //! * [SiteListReq] / [SiteListResp]
 //! * [SiteOverviewReq] / [SiteOverviewResp]
@@ -57,13 +58,12 @@
 //! * SiteInventory,
 //! * SiteInverterTechnicalData,
 //! * SiteEquipmentChangeLog,
-//! * AccountsList,
-//! * SiteMetersData,
-//! * SiteSensorData
+//! * AccountsList
 //!
 //! Unsupported API requests/responses include:
 //! * SiteImage,
-//! * SiteInstallerImage
+//! * SiteInstallerImage,
+//! * SiteSensorData
 
 #![warn(unused_crate_dependencies)]
 #![deny(unused_extern_crates)]
@@ -81,6 +81,7 @@ pub use site_environmental_benefits::{
     Req as SiteEnvironmentalBenefitsReq, Resp as SiteEnvironmentalBenefitsResp,
 };
 pub use site_equipment_list::{Req as SiteEquipmentListReq, Resp as SiteEquipmentListResp};
+pub use site_get_meters_data::{Req as SiteGetMetersDataReq, Resp as SiteGetMetersDataResp};
 pub use site_get_sensor_list::{Req as SiteGetSensorListReq, Resp as SiteGetSensorListResp};
 pub use site_list::{Req as SiteListReq, Resp as SiteListResp};
 pub use site_overview::{Req as SiteOverviewReq, Resp as SiteOverviewResp};
@@ -114,6 +115,7 @@ mod site_energy;
 mod site_energy_detailed;
 mod site_environmental_benefits;
 mod site_equipment_list;
+mod site_get_meters_data;
 mod site_get_sensor_list;
 mod site_list;
 mod site_location;

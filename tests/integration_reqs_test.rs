@@ -8,9 +8,9 @@ mod common;
 use se_ms_api::{
     CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
     SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq, SiteEquipmentListReq,
-    SiteGetSensorListReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq,
-    SitePowerReq, SiteStorageDataReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits,
-    TimeUnit,
+    SiteGetMetersDataReq, SiteGetSensorListReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq,
+    SitePowerFlowReq, SitePowerReq, SiteStorageDataReq, SiteTimeFrameEnergyReq,
+    SupportedVersionsReq, SystemUnits, TimeUnit,
 };
 
 #[test]
@@ -52,7 +52,7 @@ fn site_energy_detailed_integration_test() {
                     self_consumption += value;
                 }
             }
-            assert!(self_consumption as i32 == 292473);
+            assert_eq!(self_consumption as i32, 292473);
         }
         Err(e) => {
             panic!("Unexpected SiteEnergyDetailedReq response: {:?}", e);
@@ -468,6 +468,60 @@ fn site_get_sensor_list_integration_test() {
         }
         Err(e) => {
             panic!("Unexpected SiteGetSensors response: {:?}", e);
+        }
+    };
+}
+
+#[test]
+fn site_get_meters_data_integration_test() {
+    let start_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing start date: {}", error),
+        };
+
+    let end_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing end date: {}", error),
+        };
+
+    let req = SiteGetMetersDataReq::new(start_ndt, end_ndt, None, Some(vec![MeterType::FeedIn]));
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.meter_energy_details.unit, "Wh");
+            assert_eq!(r.meter_energy_details.time_unit, TimeUnit::Day);
+            assert_eq!(r.meter_energy_details.meters.len(), 1);
+            assert_eq!(
+                r.meter_energy_details.meters[0].meter_serial_number.len(),
+                7
+            );
+            assert_eq!(
+                r.meter_energy_details.meters[0]
+                    .connected_solaredge_device_sn
+                    .len(),
+                11
+            );
+            assert_eq!(r.meter_energy_details.meters[0].model, "WNC-3D-240-MB");
+            assert_eq!(
+                r.meter_energy_details.meters[0].meter_type,
+                MeterType::FeedIn
+            );
+            assert_eq!(r.meter_energy_details.meters[0].values.len(), 30);
+
+            let mut self_consumption: f32 = 0.0;
+            for v in &r.meter_energy_details.meters[0].values {
+                if let Some(value) = v.value {
+                    self_consumption += value;
+                }
+            }
+            assert_eq!(self_consumption as i32, 906998528);
+        }
+        Err(e) => {
+            panic!("Unexpected SiteGetMetersDataReq response: {:?}", e);
         }
     };
 }
