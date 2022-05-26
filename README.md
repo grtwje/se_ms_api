@@ -9,6 +9,9 @@ I've implemented most of the API.
 * The bulk requests have not been implemented. Since I only have one inverter, I cannot test bulk.
 * The site storage data request is only partially tested since I don't have a battery (yet).
 * The site image and installer logo image requests are not implemented. I did not want to deal with handling the images. :)
+* The get sensor data request is not implemented since I do not have any sensors to test against.
+
+Note that the API document provided by SolarEdge is not complete. And based on actual testing, in some cases it is incorrect. I have tested against my site's data. For other site's I expect there are cases where se_ms_api will be surprised by the response returned from the SolarEdge server. Open an issue for these cases.
 
 I did this as an exercise to learn Rust.  There are other similar libraries out there that are more sophisticated. 
 
