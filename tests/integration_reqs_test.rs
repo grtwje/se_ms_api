@@ -6,11 +6,11 @@ extern crate lazy_static;
 mod common;
 
 use se_ms_api::{
-    CurrentVersionReq, MeterType, SendReq, SiteDataPeriodReq, SiteDetailsReq,
-    SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq, SiteEquipmentListReq,
-    SiteGetMetersDataReq, SiteGetSensorListReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq,
-    SitePowerFlowReq, SitePowerReq, SiteStorageDataReq, SiteTimeFrameEnergyReq,
-    SupportedVersionsReq, SystemUnits, TimeUnit,
+    AccountsListReq, CurrentVersionReq, Kind, MeterType, SendReq, SiteDataPeriodReq,
+    SiteDetailsReq, SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq,
+    SiteEquipmentListReq, SiteGetMetersDataReq, SiteGetSensorListReq, SiteListReq, SiteOverviewReq,
+    SitePowerDetailedReq, SitePowerFlowReq, SitePowerReq, SiteStorageDataReq,
+    SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits, TimeUnit,
 };
 
 #[test]
@@ -52,7 +52,7 @@ fn site_energy_detailed_integration_test() {
                     self_consumption += value;
                 }
             }
-            assert_eq!(self_consumption as i32, 292473);
+            assert_eq!(self_consumption as u32, 292473);
         }
         Err(e) => {
             panic!("Unexpected SiteEnergyDetailedReq response: {:?}", e);
@@ -518,10 +518,42 @@ fn site_get_meters_data_integration_test() {
                     self_consumption += value;
                 }
             }
-            assert_eq!(self_consumption as i32, 906998528);
+            assert_eq!(self_consumption as u32, 906998528);
         }
         Err(e) => {
             panic!("Unexpected SiteGetMetersDataReq response: {:?}", e);
         }
     };
+}
+
+#[test]
+fn accounts_list_integration_test() {
+    let req = AccountsListReq::new(Some(1), Some(0), None, None, None);
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(_r) => {
+            panic!("Unexpected AccountsList success");
+            /*
+            assert_eq!(r.accounts.count, 1);
+            assert_eq!(r.accounts.list.e.len(), 1);
+            assert_eq!(r.accounts.list.e[0].id, 0);
+            assert_eq!(r.accounts.list.e[0].location.country, "US");
+            assert_eq!(r.accounts.list.e[0].company_web_site, "");
+            assert_eq!(r.accounts.list.e[0].contact_person, "");
+            assert_eq!(r.accounts.list.e[0].email, "");
+            assert_eq!(r.accounts.list.e[0].phone_number, "");
+            assert_eq!(r.accounts.list.e[0].fax_number, "");
+            assert_eq!(r.accounts.list.e[0].notes, "");
+            assert_eq!(r.accounts.list.e[0].parent_id, 0);
+            assert!(r.accounts.list.e[0].uris.contains_key("SITE_IMAGE"));
+            */
+        }
+        Err(e) => match e.kind() {
+            Kind::HttpErrorStatus(error_string, _) => {
+                assert_eq!(error_string, "Forbidden");
+            }
+            _ => panic!("Unexpected AccountsList response: {:?}", e),
+        },
+    }
 }
