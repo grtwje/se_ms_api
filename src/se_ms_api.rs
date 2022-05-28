@@ -48,6 +48,7 @@
 //! * [SiteGetMetersDataReq] / [SiteGetMetersDataResp]
 //! * [SiteGetSensorListReq] / [SiteGetSensorListResp]
 //! * [SiteInventoryReq] / [SiteInventoryResp]
+//! * [SiteInverterTechnicalDataReq] / [SiteInverterTechnicalDataResp]
 //! * [SiteListReq] / [SiteListResp]
 //! * [SiteOverviewReq] / [SiteOverviewResp]
 //! * [SitePowerReq] / [SitePowerResp]
@@ -56,9 +57,6 @@
 //! * [SiteStorageDataReq] / [SiteStorageDataResp]
 //! * [SiteTimeFrameEnergyReq] / [SiteTimeFrameEnergyResp]
 //! * [SupportedVersionsReq] / [SupportedVersionsResp]
-//!
-//! TODO:
-//! * SiteInverterTechnicalData,
 //!
 //! Unsupported API requests/responses include:
 //! * SiteImage,
@@ -111,6 +109,10 @@ pub use site_inventory::{
     Meter as SiteInventoryMeter, Req as SiteInventoryReq, Resp as SiteInventoryResp,
     Sensor as SiteInventorySensor,
 };
+pub use site_inverter_technical_data::{
+    InverterData, InverterMode, LxData, Req as SiteInverterTechnicalDataReq,
+    Resp as SiteInverterTechnicalDataResp, Telemetries, Telemetry,
+};
 pub use site_list::{Entries as SiteListEntries, Req as SiteListReq, Resp as SiteListResp, Sites};
 pub use site_location::SiteLocation;
 pub use site_module::SiteModule;
@@ -154,6 +156,7 @@ mod site_equipment_list;
 mod site_get_meters_data;
 mod site_get_sensor_list;
 mod site_inventory;
+mod site_inverter_technical_data;
 mod site_list;
 mod site_location;
 mod site_module;

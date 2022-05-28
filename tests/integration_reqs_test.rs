@@ -6,12 +6,12 @@ extern crate lazy_static;
 mod common;
 
 use se_ms_api::{
-    AccountsListReq, CurrentVersionReq, Kind, MeterType, SendReq, SiteDataPeriodReq,
+    AccountsListReq, CurrentVersionReq, InverterMode, Kind, MeterType, SendReq, SiteDataPeriodReq,
     SiteDetailsReq, SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq,
     SiteEquipmentChangeLogReq, SiteEquipmentListReq, SiteGetMetersDataReq, SiteGetSensorListReq,
-    SiteInventoryReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq,
-    SitePowerReq, SiteStorageDataReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits,
-    TimeUnit,
+    SiteInventoryReq, SiteInverterTechnicalDataReq, SiteListReq, SiteOverviewReq,
+    SitePowerDetailedReq, SitePowerFlowReq, SitePowerReq, SiteStorageDataReq,
+    SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits, TimeUnit,
 };
 
 #[test]
@@ -369,7 +369,7 @@ fn site_storage_data_integration_test() {
         };
 
     let end_ndt =
-        match NaiveDateTime::parse_from_str("2022-01-7 00:00:00", common::DATE_TIME_FORMAT) {
+        match NaiveDateTime::parse_from_str("2022-01-07 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
             Err(error) => panic!("Error parsing end date: {}", error),
         };
@@ -597,6 +597,42 @@ fn site_equipment_change_log_integration_test() {
         }
         Err(e) => {
             panic!("Unexpected SiteEquipmentChangeLog response: {:?}", e);
+        }
+    };
+}
+
+#[test]
+fn site_inverter_technical_data_integration_test() {
+    let start_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing start date: {}", error),
+        };
+
+    let end_ndt =
+        match NaiveDateTime::parse_from_str("2022-01-01 09:00:00", common::DATE_TIME_FORMAT) {
+            Ok(dt) => dt,
+            Err(error) => panic!("Error parsing end date: {}", error),
+        };
+
+    let req = SiteInverterTechnicalDataReq::new("7308CC3E-85", start_ndt, end_ndt);
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.data.count, 14);
+            assert_eq!(r.data.count as usize, r.data.telemetries.t.len());
+            assert_eq!(
+                r.data.telemetries.t[0].inverter_mode,
+                InverterMode::Sleeping
+            );
+            assert_eq!(r.data.telemetries.t[0].operation_mode, 0);
+            assert_eq!(r.data.telemetries.t[0].l1_data.ac_voltage, 245.42);
+            assert_eq!(r.data.telemetries.t[1].inverter_mode, InverterMode::Mppt);
+        }
+        Err(e) => {
+            panic!("Unexpected SiteInverterTechnicalData response: {:?}", e);
         }
     };
 }
