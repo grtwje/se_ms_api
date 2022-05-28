@@ -120,6 +120,7 @@ pub struct Sites {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(transparent)]
 pub struct Entries {
+    /// Transparent list of sites
     pub e: Vec<SiteDetails>,
 }
 

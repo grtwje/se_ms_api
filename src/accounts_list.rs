@@ -79,6 +79,7 @@ pub struct Accounts {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(transparent)]
 pub struct Entries {
+    /// Transparent list of accounts
     pub e: Vec<AccountDetails>,
 }
 

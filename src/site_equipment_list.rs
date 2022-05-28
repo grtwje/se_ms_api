@@ -30,6 +30,7 @@ pub struct Reporters {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(transparent)]
 pub struct EquipmentList {
+    /// Transparent list of equipment
     pub eq: Vec<Equipment>,
 }
 
@@ -49,6 +50,7 @@ pub struct Equipment {
     /// Equipment's serial number
     pub serial_number: String,
 
+    /// Kilowatts peak DC
     #[serde(rename = "kWpDC")]
     pub kw_pdc: Option<String>,
 }

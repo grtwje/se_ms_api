@@ -30,6 +30,7 @@ pub struct SiteSensors {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(transparent)]
 pub struct Gateways {
+    /// Transparent list of gateways
     pub g: Vec<Gateway>,
 }
 
@@ -51,6 +52,7 @@ pub struct Gateway {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(transparent)]
 pub struct Sensors {
+    /// Transparent list of sensors
     pub s: Vec<Sensor>,
 }
 

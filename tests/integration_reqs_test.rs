@@ -8,9 +8,10 @@ mod common;
 use se_ms_api::{
     AccountsListReq, CurrentVersionReq, Kind, MeterType, SendReq, SiteDataPeriodReq,
     SiteDetailsReq, SiteEnergyDetailedReq, SiteEnergyReq, SiteEnvironmentalBenefitsReq,
-    SiteEquipmentListReq, SiteGetMetersDataReq, SiteGetSensorListReq, SiteListReq, SiteOverviewReq,
-    SitePowerDetailedReq, SitePowerFlowReq, SitePowerReq, SiteStorageDataReq,
-    SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits, TimeUnit,
+    SiteEquipmentChangeLogReq, SiteEquipmentListReq, SiteGetMetersDataReq, SiteGetSensorListReq,
+    SiteInventoryReq, SiteListReq, SiteOverviewReq, SitePowerDetailedReq, SitePowerFlowReq,
+    SitePowerReq, SiteStorageDataReq, SiteTimeFrameEnergyReq, SupportedVersionsReq, SystemUnits,
+    TimeUnit,
 };
 
 #[test]
@@ -556,4 +557,46 @@ fn accounts_list_integration_test() {
             _ => panic!("Unexpected AccountsList response: {:?}", e),
         },
     }
+}
+
+#[test]
+fn site_inventory_integration_test() {
+    let req = SiteInventoryReq::new();
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.inventory.meters.len(), 4);
+            assert_eq!(r.inventory.sensors.len(), 0);
+            assert_eq!(r.inventory.gateways.len(), 1);
+            assert_eq!(r.inventory.batteries.len(), 0);
+            assert_eq!(r.inventory.inverters.len(), 1);
+            assert_eq!(r.inventory.inverters[0].name, "Inverter 1");
+            assert_eq!(r.inventory.inverters[0].manufacturer, "SolarEdge");
+            assert_eq!(r.inventory.inverters[0].communication_method, "ZIGBEE");
+            assert_eq!(r.inventory.inverters[0].connected_optimizers, 22);
+        }
+        Err(e) => {
+            panic!("Unexpected SiteInventory response: {:?}", e);
+        }
+    };
+}
+
+#[test]
+fn site_equipment_change_log_integration_test() {
+    let req = SiteEquipmentChangeLogReq::new("7308CC3E-85");
+
+    let resp = req.send(&common::TEST_CREDENTIALS);
+
+    match resp {
+        Ok(r) => {
+            assert_eq!(r.change_log.count, 1);
+            assert_eq!(r.change_log.count as usize, r.change_log.list.len());
+            assert_eq!(r.change_log.list[0].date, "2020-07-31");
+        }
+        Err(e) => {
+            panic!("Unexpected SiteEquipmentChangeLog response: {:?}", e);
+        }
+    };
 }

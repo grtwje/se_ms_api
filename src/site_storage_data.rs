@@ -23,7 +23,10 @@ pub struct Resp {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct StorageData {
+    /// Number of batteries in teh battery list
     pub battery_count: u16,
+
+    /// List of batteries at the site
     pub batteries: Batteries,
 }
 
@@ -31,6 +34,7 @@ pub struct StorageData {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(transparent)]
 pub struct Batteries {
+    /// Transparent list of batteries
     pub e: Vec<Battery>,
 }
 
@@ -38,6 +42,7 @@ pub struct Batteries {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Battery {
+    /// The nameplate capacity of the battery as provided by the manufacturer
     pub nameplate: u32,
 }
 
