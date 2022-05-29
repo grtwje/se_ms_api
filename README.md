@@ -44,3 +44,10 @@ match resp {                                              // (4)
    }
 }
 ```
+
+To include the latest stable release, add this to your Cargo.toml file. (If there's interest, and it matures a bit, I'll put it on crates.io later.)
+
+```toml
+[dependencies]
+se_monitoring_server_api = {git = "https://github.com/grtwje/se_ms_api", tag = "0.1.0-alpha.1"}
+```
