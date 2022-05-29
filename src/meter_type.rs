@@ -33,6 +33,12 @@ impl std::fmt::Display for MeterType {
     }
 }
 
+impl Default for MeterType {
+    fn default() -> MeterType {
+        MeterType::Production
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -1,7 +1,7 @@
 //! Module for querying a list of sites related to the given token, which is the account api_key.
 //! This API accepts parameters for convenient search, sort and pagination.
 
-use crate::{SendReq, SiteDetails, MONITORING_API_URL};
+use crate::{SendReq, SiteDetails, SortOrder, MONITORING_API_URL};
 use serde::Deserialize;
 
 /// site_list request
@@ -74,24 +74,6 @@ impl std::fmt::Display for SortProperty {
 }
 
 #[derive(Clone, Debug, PartialEq)]
-pub enum SortOrder {
-    /// Sort ascending
-    Asc,
-
-    /// Sort descending
-    Desc,
-}
-
-impl std::fmt::Display for SortOrder {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match *self {
-            SortOrder::Asc => write!(f, "ASC"),
-            SortOrder::Desc => write!(f, "DESC"),
-        }
-    }
-}
-
-#[derive(Clone, Debug, PartialEq)]
 pub enum Status {
     /// Active sites
     Active,
@@ -138,6 +120,7 @@ pub struct Sites {
 #[derive(Clone, Deserialize, Debug, Default, PartialEq)]
 #[serde(transparent)]
 pub struct Entries {
+    /// Transparent list of sites
     pub e: Vec<SiteDetails>,
 }
 
@@ -146,12 +129,16 @@ impl Req {
     ///
     /// # Arguments
     ///
-    /// * `size` -
-    /// * `start_index` -
-    /// * `search_text` -
-    /// * `sort_property` -
-    /// * `sort_order` -
-    /// * `status` -
+    /// * `size` - The maximum number of sites returned by this call.
+    ///            If you have more than 100 sites, just request another 100
+    ///            sites with startIndex=100. This will fetch sites 100-199.
+    /// * `start_index` - The first site index to be returned in the results
+    /// * `search_text` - Search text for this site
+    /// * `sort_property` - A sorting option for this site list, based on
+    ///                     one of its properties
+    /// * `sort_order` - Sort order for the sort property
+    /// * `status` - Select the sites to be included in the list by their status.
+    ///              Default list will include Active and Pending sites.
     #[must_use]
     pub fn new(
         size: Option<u16>,
@@ -239,7 +226,6 @@ mod tests {
     fn normal_types_unit_test() {
         is_normal::<Req>();
         is_normal::<SortProperty>();
-        is_normal::<SortOrder>();
         is_normal::<Status>();
         is_normal::<Resp>();
         is_normal::<Sites>();

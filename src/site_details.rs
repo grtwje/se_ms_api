@@ -20,13 +20,13 @@ pub struct Resp {
 #[serde(rename_all = "camelCase")]
 pub struct SiteDetails {
     /// ID of the site. Should match the site_id specified in the Solaredge request.
-    pub id: i32,
+    pub id: u32,
 
     /// Name of the site.
     pub name: String,
 
     /// Account the site belongs to.
-    pub account_id: i32,
+    pub account_id: u32,
 
     /// Site status, either Active or Pending Communication.
     pub status: String,
@@ -60,7 +60,7 @@ pub struct SiteDetails {
     pub primary_module: SiteModule,
 
     /// Number of open alerts at the site.
-    pub alert_quantity: Option<i32>,
+    pub alert_quantity: Option<u32>,
 
     /// Highest alert severity at the site.
     pub alert_severity: Option<String>,
