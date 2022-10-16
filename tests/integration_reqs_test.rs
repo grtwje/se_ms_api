@@ -332,7 +332,7 @@ fn site_overview_integration_test() {
                 panic!("Unexpected value.");
             }
 
-            assert!(r.overview.current_power.power > 0.0);
+            assert!(r.overview.current_power.power >= 0.0);
             assert_eq!(r.overview.measured_by, "INVERTER".to_string());
         }
         Err(e) => {
