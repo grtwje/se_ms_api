@@ -60,7 +60,7 @@ impl Req {
 
         let serials = match serials {
             Some(s) => format!("serials={}&", s.join(",")),
-            None => "".to_string(),
+            None => String::new(),
         };
 
         Req {

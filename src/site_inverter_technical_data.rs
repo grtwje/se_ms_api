@@ -236,8 +236,8 @@ mod tests {
         let dt = "2022-01-01 00:00:00";
         if let Ok(ndt) = NaiveDateTime::parse_from_str(dt, "%Y-%m-%d %H:%M:%S") {
             let req = Req::new("foo", ndt, ndt);
-            assert_eq!(req.start_time, format!("startTime={}&", dt));
-            assert_eq!(req.end_time, format!("endTime={}&", dt));
+            assert_eq!(req.start_time, format!("startTime={dt}&"));
+            assert_eq!(req.end_time, format!("endTime={dt}&"));
             assert_eq!(req.serial_number, "foo");
         } else {
             panic!("test failed");

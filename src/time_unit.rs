@@ -53,7 +53,7 @@ mod tests {
     #[test]
     fn time_unit_fmt_unit_test() {
         let t = TimeUnit::Year;
-        assert_eq!(format!("{}", t), "YEAR");
+        assert_eq!(format!("{t}"), "YEAR");
     }
 
     #[test]

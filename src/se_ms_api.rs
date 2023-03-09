@@ -205,7 +205,7 @@ impl SolaredgeCredentials {
     #[must_use]
     pub fn new(site_id: &str, api_key: &str) -> Self {
         let site_id = site_id.to_string();
-        let api_key = format!("api_key={}", api_key);
+        let api_key = format!("api_key={api_key}");
 
         SolaredgeCredentials { site_id, api_key }
     }
@@ -255,7 +255,7 @@ pub trait SendReq<Resp> {
 
             let text = match res.text() {
                 Ok(t) => t,
-                Err(_) => "".to_string(),
+                Err(_) => String::new(),
             };
 
             Err(Error::new(Kind::HttpErrorStatus(reason, text)))

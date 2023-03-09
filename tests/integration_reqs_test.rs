@@ -19,13 +19,13 @@ fn site_energy_detailed_integration_test() {
     let start_ndt =
         match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing start date: {}", error),
+            Err(error) => panic!("Error parsing start date: {error}"),
         };
 
     let end_ndt =
         match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing end date: {}", error),
+            Err(error) => panic!("Error parsing end date: {error}"),
         };
 
     let req = SiteEnergyDetailedReq::new(
@@ -116,13 +116,13 @@ fn site_power_detailed_integration_test() {
     let start_ndt =
         match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing start date: {}", error),
+            Err(error) => panic!("Error parsing start date: {error}"),
         };
 
     let end_ndt =
         match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing end date: {}", error),
+            Err(error) => panic!("Error parsing end date: {error}"),
         };
 
     let req = SitePowerDetailedReq::new(start_ndt, end_ndt, Some(vec![MeterType::Purchased]));
@@ -164,7 +164,7 @@ fn site_data_period_integration_test() {
                 panic!("SiteDataPeriod start date is none.")
             }
             if let Some(ed) = r.data_period.end_date {
-                let mut today = Local::today().to_string();
+                let mut today = Local::now().to_string();
                 today.truncate(10);
                 assert_eq!(ed, today);
             } else {
@@ -181,12 +181,12 @@ fn site_data_period_integration_test() {
 fn site_energy_integration_test() {
     let start_date = match NaiveDate::parse_from_str("2022-01-01", common::DATE_FORMAT) {
         Ok(dt) => dt,
-        Err(error) => panic!("Error parsing start date: {}", error),
+        Err(error) => panic!("Error parsing start date: {error}"),
     };
 
     let end_date = match NaiveDate::parse_from_str("2022-01-02", common::DATE_FORMAT) {
         Ok(dt) => dt,
-        Err(error) => panic!("Error parsing end date: {}", error),
+        Err(error) => panic!("Error parsing end date: {error}"),
     };
 
     let req = SiteEnergyReq::new(start_date, end_date, None);
@@ -219,12 +219,12 @@ fn site_energy_integration_test() {
 fn site_time_frame_energy_integration_test() {
     let start_date = match NaiveDate::parse_from_str("2022-01-01", common::DATE_FORMAT) {
         Ok(dt) => dt,
-        Err(error) => panic!("Error parsing start date: {}", error),
+        Err(error) => panic!("Error parsing start date: {error}"),
     };
 
     let end_date = match NaiveDate::parse_from_str("2022-01-02", common::DATE_FORMAT) {
         Ok(dt) => dt,
-        Err(error) => panic!("Error parsing end date: {}", error),
+        Err(error) => panic!("Error parsing end date: {error}"),
     };
 
     let req = SiteTimeFrameEnergyReq::new(start_date, end_date);
@@ -244,13 +244,13 @@ fn site_power_integration_test() {
     let start_date =
         match NaiveDateTime::parse_from_str("2022-01-01 12:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing start date: {}", error),
+            Err(error) => panic!("Error parsing start date: {error}"),
         };
 
     let end_date =
         match NaiveDateTime::parse_from_str("2022-01-01 13:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing end date: {}", error),
+            Err(error) => panic!("Error parsing end date: {error}"),
         };
 
     let req = SitePowerReq::new(start_date, end_date);
@@ -365,13 +365,13 @@ fn site_storage_data_integration_test() {
     let start_ndt =
         match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing start date: {}", error),
+            Err(error) => panic!("Error parsing start date: {error}"),
         };
 
     let end_ndt =
         match NaiveDateTime::parse_from_str("2022-01-07 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing end date: {}", error),
+            Err(error) => panic!("Error parsing end date: {error}"),
         };
 
     let req = SiteStorageDataReq::new(start_ndt, end_ndt, None);
@@ -478,13 +478,13 @@ fn site_get_meters_data_integration_test() {
     let start_ndt =
         match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing start date: {}", error),
+            Err(error) => panic!("Error parsing start date: {error}"),
         };
 
     let end_ndt =
         match NaiveDateTime::parse_from_str("2022-01-31 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing end date: {}", error),
+            Err(error) => panic!("Error parsing end date: {error}"),
         };
 
     let req = SiteGetMetersDataReq::new(start_ndt, end_ndt, None, Some(vec![MeterType::FeedIn]));
@@ -606,13 +606,13 @@ fn site_inverter_technical_data_integration_test() {
     let start_ndt =
         match NaiveDateTime::parse_from_str("2022-01-01 00:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing start date: {}", error),
+            Err(error) => panic!("Error parsing start date: {error}"),
         };
 
     let end_ndt =
         match NaiveDateTime::parse_from_str("2022-01-01 09:00:00", common::DATE_TIME_FORMAT) {
             Ok(dt) => dt,
-            Err(error) => panic!("Error parsing end date: {}", error),
+            Err(error) => panic!("Error parsing end date: {error}"),
         };
 
     let req = SiteInverterTechnicalDataReq::new("7308CC3E-85", start_ndt, end_ndt);

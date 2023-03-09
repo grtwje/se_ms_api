@@ -168,32 +168,32 @@ impl Req {
         let size = match size {
             Some(s) => {
                 if s > 0 && s <= 100 {
-                    format!("size={}&", s)
+                    format!("size={s}&")
                 } else {
-                    "".to_string()
+                    String::new()
                 }
             }
-            None => "".to_string(),
+            None => String::new(),
         };
 
         let start_index = match start_index {
-            Some(si) => format!("startIndex={}&", si),
-            None => "".to_string(),
+            Some(si) => format!("startIndex={si}&"),
+            None => String::new(),
         };
 
         let search_text = match search_text {
-            Some(st) => format!("searchText={}&", st),
-            None => "".to_string(),
+            Some(st) => format!("searchText={st}&"),
+            None => String::new(),
         };
 
         let sort_property = match sort_property {
-            Some(sp) => format!("sortProperty={}&", sp),
-            None => "".to_string(),
+            Some(sp) => format!("sortProperty={sp}&"),
+            None => String::new(),
         };
 
         let sort_order = match sort_order {
-            Some(so) => format!("sortOrder={}&", so),
-            None => "".to_string(),
+            Some(so) => format!("sortOrder={so}&"),
+            None => String::new(),
         };
 
         Req {

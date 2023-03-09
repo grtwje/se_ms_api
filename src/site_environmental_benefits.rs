@@ -55,8 +55,8 @@ impl Req {
     #[must_use]
     pub fn new(system_units: Option<SystemUnits>) -> Self {
         let system_units = match system_units {
-            Some(su) => format!("systemUnits={}&", su),
-            None => "".to_string(),
+            Some(su) => format!("systemUnits={su}&"),
+            None => String::new(),
         };
 
         Req { system_units }

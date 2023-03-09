@@ -30,7 +30,7 @@ mod tests {
     #[test]
     fn system_units_fmt_unit_test() {
         let t = SystemUnits::Imperial;
-        assert_eq!(format!("{}", t), "Imperial");
+        assert_eq!(format!("{t}"), "Imperial");
     }
 
     #[test]

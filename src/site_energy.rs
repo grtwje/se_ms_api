@@ -52,8 +52,8 @@ impl Req {
         let end_date = format!("endDate={}&", end_date.format(URL_DATE_FORMAT));
 
         let time_unit = match time_unit {
-            Some(t) => format!("timeUnit={}&", t),
-            None => "".to_string(),
+            Some(t) => format!("timeUnit={t}&"),
+            None => String::new(),
         };
 
         Req {

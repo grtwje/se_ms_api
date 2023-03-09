@@ -47,7 +47,7 @@ mod tests {
     #[test]
     fn meter_type_fmt_unit_test() {
         let t = MeterType::Production;
-        assert_eq!(format!("{}", t), "Production");
+        assert_eq!(format!("{t}"), "Production");
     }
 
     #[test]

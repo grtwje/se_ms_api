@@ -57,8 +57,8 @@ impl Req {
         let end_time = format!("endTime={}&", end_time.format(URL_DATE_TIME_FORMAT));
 
         let time_unit = match time_unit {
-            Some(t) => format!("timeUnit={}&", t),
-            None => "".to_string(),
+            Some(t) => format!("timeUnit={t}&"),
+            None => String::new(),
         };
 
         let meters = match meters {
@@ -69,7 +69,7 @@ impl Req {
                     .collect::<Vec<_>>()
                     .join(",")
             ),
-            None => "".to_string(),
+            None => String::new(),
         };
 
         Req {
@@ -107,8 +107,8 @@ mod tests {
         let dt = "2022-01-01 00:00:00";
         if let Ok(ndt) = NaiveDateTime::parse_from_str(dt, "%Y-%m-%d %H:%M:%S") {
             let req = Req::new(ndt, ndt, None, None);
-            assert_eq!(req.start_time, format!("startTime={}&", dt));
-            assert_eq!(req.end_time, format!("endTime={}&", dt));
+            assert_eq!(req.start_time, format!("startTime={dt}&"));
+            assert_eq!(req.end_time, format!("endTime={dt}&"));
             assert_eq!(req.time_unit, "");
             assert_eq!(req.meters, "");
         } else {

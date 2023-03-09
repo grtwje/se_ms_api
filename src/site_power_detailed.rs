@@ -59,7 +59,7 @@ impl Req {
                     .collect::<Vec<_>>()
                     .join(",")
             ),
-            None => "".to_string(),
+            None => String::new(),
         };
 
         Req {
@@ -90,8 +90,8 @@ mod tests {
         let dt = "2022-01-01 00:00:00";
         if let Ok(ndt) = NaiveDateTime::parse_from_str(dt, "%Y-%m-%d %H:%M:%S") {
             let req = Req::new(ndt, ndt, None);
-            assert_eq!(req.start_time, format!("startTime={}&", dt));
-            assert_eq!(req.end_time, format!("endTime={}&", dt));
+            assert_eq!(req.start_time, format!("startTime={dt}&"));
+            assert_eq!(req.end_time, format!("endTime={dt}&"));
             assert_eq!(req.meters, "");
         } else {
             panic!("test failed");

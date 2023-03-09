@@ -45,8 +45,8 @@ impl error::Error for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self.kind {
-            Kind::ReqwestError(s) => write!(f, "Reqwest Error: HTTP status-code{}", s),
-            Kind::HttpErrorStatus(s, t) => write!(f, "HTTP error: {}: {}", s, t),
+            Kind::ReqwestError(s) => write!(f, "Reqwest Error: HTTP status-code {s}"),
+            Kind::HttpErrorStatus(s, t) => write!(f, "HTTP error: {s}: {t}"),
         }
     }
 }
