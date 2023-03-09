@@ -129,7 +129,7 @@ pub struct AccountLocation {
     pub country: String,
 
     /// State of the SolarEdge inverter.
-    pub state: String, // seems US specific. should this be Option<String>?
+    pub state: Option<String>, // seems US specific. should this be Option<String>? probably
 
     /// City of the SolarEdge inverter.
     pub city: String,
@@ -140,7 +140,7 @@ pub struct AccountLocation {
     /// Address line 2 of the SolarEdge inverter.
     pub address2: String,
 
-    /// Zip code 1 of the SolarEdge inverter.
+    /// Zip code 1 of the SolarEdge inverter. Used in UK, in EU?
     pub zip: String, // seems US specific. should this be Option<String>?
 }
 
