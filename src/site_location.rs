@@ -31,7 +31,7 @@ pub struct SiteLocation {
     pub country_code: String,
 
     /// State (abbreviation) of the SolarEdge inverter.
-    pub state_code: String, // seems US specific. should this be Option<String>?
+    pub state_code: Option<String>, // seems US specific. should this be Option<String>?
 }
 
 #[cfg(test)]
