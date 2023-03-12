@@ -1,6 +1,6 @@
 [package]
 name = "se_monitoring_server_api"
-version = "0.1.0-alpha.3"
+version = "0.1.0-alpha.4"
 edition = "2021"
 description = "Library for accessing the SolarEdge Monitoring Server API"
 license = "MIT"
