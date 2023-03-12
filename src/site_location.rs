@@ -10,7 +10,7 @@ pub struct SiteLocation {
     pub country: String,
 
     /// State of the SolarEdge inverter.
-    pub state: String, // seems US specific. should this be Option<String>?
+    pub state: Option<String>, // seems US specific. should this be Option<String>? probably
 
     /// City of the SolarEdge inverter.
     pub city: String,
@@ -21,7 +21,7 @@ pub struct SiteLocation {
     /// Address line 2 of the SolarEdge inverter.
     pub address2: String,
 
-    /// Zip code 1 of the SolarEdge inverter.
+    /// Zip code 1 of the SolarEdge inverter. Used in UK, in EU?
     pub zip: String, // seems US specific. should this be Option<String>?
 
     /// Time zone of the SolarEdge inverter.
@@ -31,7 +31,7 @@ pub struct SiteLocation {
     pub country_code: String,
 
     /// State (abbreviation) of the SolarEdge inverter.
-    pub state_code: String, // seems US specific. should this be Option<String>?
+    pub state_code: Option<String>, // seems US specific. should this be Option<String>?
 }
 
 #[cfg(test)]
