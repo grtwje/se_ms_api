@@ -99,10 +99,11 @@ pub struct LxData {
 }
 
 /// Inverter operating mode
-#[derive(Clone, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, PartialEq, Default)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum InverterMode {
     /// Off
+    #[default]
     Off,
 
     /// Night mode
@@ -176,12 +177,6 @@ impl std::fmt::Display for InverterMode {
             InverterMode::Mppt => write!(f, "MPPT"),
             InverterMode::Sleeping => write!(f, "Sleeping"),
         }
-    }
-}
-
-impl Default for InverterMode {
-    fn default() -> InverterMode {
-        InverterMode::Off
     }
 }
 

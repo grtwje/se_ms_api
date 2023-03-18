@@ -25,6 +25,6 @@ jobs:
       - name: Fmt
         run: cargo fmt --all -- --check
       - name: Lint
-        uses: actions-rs/clippy-check@v1
+        run: cargo clippy -- -D warnings
         with:
           token: ${{ secrets.GITHUB_TOKEN }}

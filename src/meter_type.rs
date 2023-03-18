@@ -3,9 +3,10 @@
 use serde::Deserialize;
 
 /// Meters supported by SolarEdge.
-#[derive(Clone, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, PartialEq, Default)]
 pub enum MeterType {
     /// Solar energy produced.
+    #[default]
     Production,
 
     /// Total energy consumed (solar + grid)
@@ -30,12 +31,6 @@ impl std::fmt::Display for MeterType {
             MeterType::FeedIn => write!(f, "FeedIn"),
             MeterType::Purchased => write!(f, "Purchased"),
         }
-    }
-}
-
-impl Default for MeterType {
-    fn default() -> MeterType {
-        MeterType::Production
     }
 }
 

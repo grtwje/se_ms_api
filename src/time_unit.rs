@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 /// Time units specified in SolarEdge server monitoring API requests and responses.
 /// Specifies the aggregation granularity of the data.
-#[derive(Clone, Deserialize, Debug, PartialEq)]
+#[derive(Clone, Deserialize, Debug, PartialEq, Default)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TimeUnit {
     /// 15 minutes
@@ -14,6 +14,7 @@ pub enum TimeUnit {
     Hour,
 
     /// 24 hours
+    #[default]
     Day,
 
     /// 7 days
@@ -36,12 +37,6 @@ impl std::fmt::Display for TimeUnit {
             TimeUnit::Month => write!(f, "MONTH"),
             TimeUnit::Year => write!(f, "YEAR"),
         }
-    }
-}
-
-impl Default for TimeUnit {
-    fn default() -> TimeUnit {
-        TimeUnit::Day
     }
 }
 
