@@ -24,3 +24,7 @@ jobs:
         run: cargo test --doc
       - name: Fmt
         run: cargo fmt --all -- --check
+      - name: Lint
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
