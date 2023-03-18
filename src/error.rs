@@ -22,7 +22,7 @@ impl Error {
     }
 }
 
-/// The different kinds of errors that can occur.
+/// The different kinds of errors that may occur.
 #[derive(Debug)]
 #[non_exhaustive]
 pub enum Kind {
